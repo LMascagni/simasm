@@ -4,7 +4,7 @@
    "description": "linguaggio degli dei di Udine",
    "version": "1.0.0",
    "engines": {
-      "vscode": "^1.100.0"
+      "vscode": "^1.99.3"
    },
    "categories": [
       "Programming Languages",
@@ -44,10 +44,10 @@
             "language": "simasm",
             "path": "./snippets/simasm.code-snippets"
          }
-      ] 
+      ]
    },
    "repository": {
-    "type": "git",
-    "url": "https://github.com/LMascagni/simasm"
-  }
+      "type": "git",
+      "url": "https://github.com/LMascagni/simasm"
+   }
 }
