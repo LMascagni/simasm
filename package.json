@@ -1,0 +1,53 @@
+{
+   "name": "simasm",
+   "displayName": "simcpu-asm",
+   "description": "linguaggio degli dei di Udine",
+   "version": "1.0.0",
+   "engines": {
+      "vscode": "^1.100.0"
+   },
+   "categories": [
+      "Programming Languages",
+      "Themes"
+   ],
+   "contributes": {
+      "languages": [
+         {
+            "id": "simasm",
+            "aliases": [
+               "SIMASM",
+               "simasm"
+            ],
+            "extensions": [
+               ".axx",
+               ".asm"
+            ],
+            "configuration": "./language-configuration.json"
+         }
+      ],
+      "grammars": [
+         {
+            "language": "simasm",
+            "scopeName": "source.simasm",
+            "path": "./syntaxes/simasm.tmLanguage.json"
+         }
+      ],
+      "themes": [
+         {
+            "label": "SIMCPU Syntax",
+            "uiTheme": "vs-dark",
+            "path": "./themes/simcpu-syntax-color-theme.json"
+         }
+      ],
+      "snippets": [
+         {
+            "language": "simasm",
+            "path": "./snippets/simasm.code-snippets"
+         }
+      ] 
+   },
+   "repository": {
+    "type": "git",
+    "url": "https://github.com/tuo-utente/simasm"
+  }
+}

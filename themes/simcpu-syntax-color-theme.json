@@ -1,0 +1,42 @@
+{
+   "name": "SIMCPU Syntax",
+   "type": "light",  // Usa "light" per uno sfondo chiaro
+   "tokenColors": [
+     {
+       "scope": "keyword.instruction.simasm",
+       "settings": {
+         "foreground": "#FF5733",  // Colore arancione per le istruzioni
+         "fontStyle": "bold"
+       }
+     },
+     {
+       "scope": "variable.other.label.simasm",
+       "settings": {
+         "foreground": "#008000",  // Colore verde per le etichette
+         "fontStyle": "italic"
+       }
+     },
+     {
+       "scope": "variable.other.register.simasm",
+       "settings": {
+         "foreground": "#1E90FF",  // Colore blu per i registri
+         "fontStyle": "bold"
+       }
+     },
+     {
+       "scope": "constant.numeric.address.simasm",
+       "settings": {
+         "foreground": "#FFD700",  // Colore giallo per gli indirizzi
+         "fontStyle": "italic"
+       }
+     },
+     {
+       "scope": "comment.line.semicolon.simasm",
+       "settings": {
+         "foreground": "#888888",  // Colore grigio per i commenti
+         "fontStyle": "italic"
+       }
+     }
+   ]
+ }
+ 
