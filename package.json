@@ -2,7 +2,7 @@
    "name": "simasm",
    "publisher": "LMascagni",
    "displayName": "simcpu-asm",
-   "description": "linguaggio degli dei di Udine",
+   "description": "linguaggio degli Dei di Udine",
    "version": "1.0.0",
    "engines": {
       "vscode": "^1.99.3"
@@ -50,6 +50,5 @@
    "repository": {
       "type": "git",
       "url": "https://github.com/LMascagni/simasm"
-   },
-   "icon": "./img/icon.png"
+   }
 }
