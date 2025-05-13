@@ -1,5 +1,6 @@
 {
    "name": "simasm",
+   "publisher": "LMascagni",
    "displayName": "simcpu-asm",
    "description": "linguaggio degli dei di Udine",
    "version": "1.0.0",
