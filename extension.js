@@ -58,6 +58,67 @@ function setFormattingStyle(context, value) {
   formattingStyle = value;
 }
 
+// Comando per aprire la tabella delle istruzioni
+function openInstructionsPanel(context) {
+  const panel = vscode.window.createWebviewPanel(
+    'simasm.instructions', // Identificatore del webview
+    'Istruzioni SIMASM',   // Titolo del pannello
+    vscode.ViewColumn.One, // Colonna in cui visualizzare il webview
+    {}                     // Opzioni del webview
+  );
+
+  // Crea una tabella HTML
+  const tableRows = Object.entries(instructionDocs).map(([name, description]) => {
+    return `<tr><td>${name}</td><td>${description}</td></tr>`;
+  }).join('');
+
+  panel.webview.html = `
+    <!DOCTYPE html>
+    <html lang="it">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Istruzioni SIMASM</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th, td {
+          padding: 8px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+        th {
+          background-color: #f2f2f2;
+        }
+        tr:hover {
+          background-color: #f1f1f1;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Istruzioni SIMASM</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Comando</th>
+            <th>Descrizione</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tableRows}
+        </tbody>
+      </table>
+    </body>
+    </html>
+  `;
+}
+
 function activate(context) {
   console.log('Estensione SIMASM attivata.');
 
@@ -178,6 +239,13 @@ function activate(context) {
   });
 
   context.subscriptions.push(hoverProvider);
+
+  // Comando per aprire la tabella delle istruzioni
+  context.subscriptions.push(
+    vscode.commands.registerCommand('extension.showInstructions', () => {
+      openInstructionsPanel(context);
+    })
+  );
 }
 
 function deactivate() {}

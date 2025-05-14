@@ -1,82 +1,86 @@
 {
-   "name": "simasm",
-   "publisher": "LMascagni",
-   "displayName": "simcpu-asm",
-   "description": "SIMASM - Assembler and machine language for SIMCPU",
-   "icon": "images/icon.png",
-   "version": "3.1.4",
-   "activationEvents": [
-      "onStartupFinished"
-   ],
-   "main": "./extension.js",
-   "engines": {
-      "vscode": "^1.99.3"
-   },
-   "categories": [
-      "Programming Languages"
-   ],
-   "contributes": {
-      "languages": [
-         {
-            "id": "simasm",
-            "aliases": [
-               "SIMASM",
-               "simasm"
-            ],
-            "extensions": [
-               ".axx",
-               ".asm"
-            ],
-            "configuration": "./language-configuration.json"
-         }
-      ],
-      "grammars": [
-         {
-            "language": "simasm",
-            "scopeName": "source.simasm",
-            "path": "./syntaxes/simasm.tmLanguage.json"
-         }
-      ],
-      "themes": [
-         {
-            "label": "SIMCPU Syntax",
-            "uiTheme": "vs-dark",
-            "path": "./themes/simcpu-syntax-color-theme.json"
-         }
-      ],
-      "snippets": [
-         {
-            "language": "simasm",
-            "path": "./snippets/simasm.code-snippets"
-         }
-      ],
-      "commands": [
-         {
-            "command": "extension.formatDocument",
-            "title": "Format SIMASM Document"
-         },
-         {
-            "command": "extension.toggleFormattingStyle",
-            "title": "SIMASM: Toggle Formatting Mode"
-         }
-      ],
-      "configuration": {
-         "title": "SIMASM",
-         "properties": {
-            "simasm.formattingStyle": {
-               "type": "string",
-               "enum": [
-                  "full",
-                  "compact"
-               ],
-               "default": "full",
-               "description": "Stile di formattazione: 'full' allinea etichetta, istruzione e operandi. 'compact' solo etichetta e istruzione."
-            }
-         }
+  "name": "simasm",
+  "publisher": "LMascagni",
+  "displayName": "simcpu-asm",
+  "description": "SIMASM - Assembler and machine language for SIMCPU",
+  "icon": "images/icon_monty.png",
+  "version": "3.9.9",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "engines": {
+    "vscode": "^1.99.3"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "simasm",
+        "aliases": [
+          "SIMASM",
+          "simasm"
+        ],
+        "extensions": [
+          ".axx",
+          ".asm"
+        ],
+        "configuration": "./language-configuration.json"
       }
-   },
-   "repository": {
-      "type": "git",
-      "url": "https://github.com/LMascagni/simasm"
-   }
+    ],
+    "grammars": [
+      {
+        "language": "simasm",
+        "scopeName": "source.simasm",
+        "path": "./syntaxes/simasm.tmLanguage.json"
+      }
+    ],
+    "themes": [
+      {
+        "label": "SIMCPU Syntax",
+        "uiTheme": "vs-dark",
+        "path": "./themes/simcpu-syntax-color-theme.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "simasm",
+        "path": "./snippets/simasm.code-snippets"
+      }
+    ],
+    "commands": [
+      {
+        "command": "extension.formatDocument",
+        "title": "Format SIMASM Document"
+      },
+      {
+        "command": "extension.toggleFormattingStyle",
+        "title": "SIMASM: Toggle Formatting Mode"
+      },
+      {
+        "command": "extension.showInstructions",
+        "title": "Show SIMASM Instructions"
+      }
+    ],
+    "configuration": {
+      "title": "SIMASM",
+      "properties": {
+        "simasm.formattingStyle": {
+          "type": "string",
+          "enum": [
+            "full",
+            "compact"
+          ],
+          "default": "full",
+          "description": "Stile di formattazione: 'full' allinea etichetta, istruzione e operandi. 'compact' solo etichetta e istruzione."
+        }
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LMascagni/simasm"
+  }
 }
