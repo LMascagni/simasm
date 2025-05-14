@@ -1,6 +1,6 @@
 {
    "name": "SIMCPU Syntax",
-   "type": "light", // Usa "light" per uno sfondo chiaro
+   "type": "dark", // Usa "light" per uno sfondo chiaro
    "tokenColors": [
       {
          "scope": "keyword.instruction.simasm",
