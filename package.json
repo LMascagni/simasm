@@ -3,7 +3,8 @@
    "publisher": "LMascagni",
    "displayName": "simcpu-asm",
    "description": "SIMASM - Assembler and machine language for SIMCPU",
-   "version": "2.1.0",
+   "icon": "images/icon.png",
+   "version": "2.1.1",
    "activationEvents": [
       "onStartupFinished"
    ],
