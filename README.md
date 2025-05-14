@@ -31,6 +31,82 @@ Questa estensione è pensata per studenti e docenti, e rende più chiara e produ
 
 ---
 
+## 🧩 Come funziona la formattazione
+
+La formattazione del codice SIMASM avviene automaticamente quando attivi il comando **"Format Document"** (`Shift+Alt+F` oppure clic destro → "Format Document").
+
+L’estensione suddivide ogni riga del codice nei seguenti componenti:
+
+- **Etichetta**: facoltativa, deve terminare con `:`
+- **Istruzione**: ad esempio `LOAD`, `STORE`, `JMP`, ecc.
+- **Operandi**: uno o due operandi (es. `A`, `0xFF`, `label`)
+- **Commento**: qualsiasi testo dopo `;`, anche da solo
+
+Ogni sezione viene **allineata automaticamente** in base alla larghezza massima trovata nel documento, rendendo il codice più leggibile.
+
+### 🔄 Cambiare modalità di formattazione
+
+SIMASM Formatter supporta due modalità di formattazione:
+
+- **Full**: colonne larghe e ben allineate per massima leggibilità
+- **Compact**: formato più compatto, meno spazi ma comunque leggibile
+
+Puoi **cambiare modalità** in qualsiasi momento utilizzando il comando:
+
+```text
+SIMASM: Toggle Formatting Mode
+```
+
+📥 Come eseguire il comando
+
+1. Apri la Command Palette (Ctrl+Shift+P o Cmd+Shift+P su macOS)
+
+2. Cerca: SIMASM: Toggle Formatting Style
+
+3. Premi Invio per alternare tra FULL e COMPACT
+
+Riceverai una notifica con la modalità attiva:
+
+```text
+Formato SIMASM: FULL
+```
+
+oppure
+
+```text
+Formato SIMASM: COMPACT
+```
+
+La modalità selezionata viene salvata automaticamente e sarà applicata a tutti i file successivi.
+
+💡 Consiglio: Puoi anche associare una scorciatoia da tastiera personalizzata a questo comando andando in
+`File → Preferences → Keyboard Shortcuts` e cercando `extension.toggleFormattingStyle`.
+
+
+---
+
+### ✅ Esempio prima/dopo
+
+#### 🔹 Prima
+
+```asm
+init:   LOAD A 0x10   ; inizializza A
+        STORE A result
+        ; questo è un commento solitario
+end:    HALT
+```
+
+🔹 Dopo la formattazione (modalità Full)
+
+```asm
+init:   LOAD     A       0x10       ; inizializza A
+        STORE    A       result     
+; questo è un commento solitario
+end:    HALT                       
+```
+
+---
+
 ## 👨‍🏫 Pensata per l’uso didattico
 
 Tutti i comandi sono documentati, con istruzioni divise per gruppo (trasferimento dati, aritmetica, controllo, I/O) e dettagli sui flag (`Z`, `N`, `C`, `V`) modificati.
