@@ -1,28 +1,38 @@
 {
    "name": "SIMASM",
    "scopeName": "source.simasm",
-   "fileTypes": ["axx", "asm"],
+   "fileTypes": [
+      "axx",
+      "asm"
+   ],
    "patterns": [
-     {
-       "name": "keyword.instruction.simasm",
-       "match": "\\b(?:LDWI|LDWA|LDWR|LDBI|LDBA|LDBR|STWA|STWR|STBA|STBR|MV|PUSH|POP|SPRD|SPWR|ADD|SUB|NOT|AND|OR|XOR|INC|DEC|LSH|RSH|INW|INB|OUTW|OUTB|TSTI|TSTO|BR|JMP|JMPZ|JMPNZ|JMPN|JMPNN|JMPC|JMPV|CALL|RET|HLT)\\b"
-     },
-     {
-       "name": "constant.numeric.address.simasm",
-       "match": "\\b0x[0-9A-Fa-f]+|\\b\\d+\\b"
-     },
-     {
-       "name": "variable.other.label.simasm",
-       "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*:"
-     },
-     {
-       "name": "variable.other.register.simasm",
-       "match": "\\b[Rr][0-9]+\\b"
-     },
-     {
-       "name": "comment.line.semicolon.simasm",
-       "match": ";.*$"
-     }
+      {
+         "name": "keyword.instruction.simasm",
+         "match": "\\b(?:LDWI|LDWA|LDWR|LDBI|LDBA|LDBR|STWA|STWR|STBA|STBR|MV|PUSH|POP|SPRD|SPWR|ADD|SUB|NOT|AND|OR|XOR|INC|DEC|LSH|RSH|INW|INB|OUTW|OUTB|TSTI|TSTO|BR|JMP|JMPZ|JMPNZ|JMPN|JMPNN|JMPC|JMPV|CALL|RET|HLT)\\b"
+      },
+      {
+         "name": "data.type.simasm",
+         "match": "\\b(word|byte)\\b"
+      },
+      {
+         "name": "constant.numeric.address.simasm",
+         "match": "\\b[0-9A-Fa-f]+\\b"
+      },
+      {
+         "name": "variable.other.label.simasm",
+         "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*:"
+      },
+      {
+         "name": "variable.other.register.simasm",
+         "match": "\\b[Rr][0-9]+\\b"
+      },
+      {
+         "name": "comment.line.semicolon.simasm",
+         "match": ";.*$"
+      },
+      {
+         "name": "variable.label.reference.simasm",
+         "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+      }
    ]
- }
- 
+}
