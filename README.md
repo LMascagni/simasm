@@ -47,3 +47,10 @@ Email: montessoro@uniud.it — Web: [www.montessoro.it](http://www.montessoro.it
 
 Freeware e Open Source. È possibile usarla e modificarla liberamente **a patto di mantenere questa nota**:
 
+---
+
+© 2001 Pier Luca Montessoro – University of Udine
+
+---
+
+👉 Perfetta per corsi di Architettura degli Elaboratori o Sistemi Digitali.
