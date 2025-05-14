@@ -3,7 +3,7 @@
    "publisher": "LMascagni",
    "displayName": "simcpu-asm",
    "description": "linguaggio degli Dei di Udine",
-   "version": "1.1.0",
+   "version": "1.2.0",
    "engines": {
       "vscode": "^1.99.3"
    },

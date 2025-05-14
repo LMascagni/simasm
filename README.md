@@ -6,18 +6,16 @@ Questa estensione è pensata per studenti e docenti, e rende più chiara e produ
 
 ✅ **Evidenziazione della sintassi**  
 ✅ **Snippet rapidi per tutte le istruzioni**  
-✅ **Tooltip descrittivi per ogni comando**  
-✅ **Colorazione dei tipi di dato (`WORD`, `BYTE`)**  
+✅ **Tooltip descrittivi per ogni comando**   
 ✅ **Tema scuro personalizzato: “SIMCPU Syntax”**  
 
 ---
 
 ## ✨ Caratteristiche principali
 
-- **Riconoscimento file**: supporto per `.asm` e `.axx`
+- **Riconoscimento file**: supporto per `.axx`
 - **Tokenizzazione avanzata**: separa correttamente istruzioni, registri, numeri e tipi
-- **Snippet espandibili**: basta digitare `LDWA` o `ADD` e premere `Tab`
-- **Tooltip**: posiziona il cursore su un’istruzione per vederne descrizione, parametri e comportamento
+- **Snippet espandibili**: basta digitare l'istruzione e premere `Tab`
 - **Tema colore incluso**: attivalo da `Preferenze → Tema Colore → SIMCPU Syntax`
 
 ---
@@ -25,9 +23,8 @@ Questa estensione è pensata per studenti e docenti, e rende più chiara e produ
 ## 🚀 Come iniziare
 
 1. Installa l'estensione
-2. Apri un file `.asm` o `.axx`
+2. Apri un file `.axx`
 3. Digita un’istruzione (es. `LDBR`) e premi `Tab` per espandere lo snippet
-4. Esplora i tooltip passando il mouse sulle istruzioni
 
 > Per migliorare i suggerimenti, si consiglia di disattivare quelli basati sul documento:  
 > `"editor.wordBasedSuggestions": false`
