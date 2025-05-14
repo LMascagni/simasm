@@ -2,14 +2,17 @@
    "name": "simasm",
    "publisher": "LMascagni",
    "displayName": "simcpu-asm",
-   "description": "linguaggio degli Dei di Udine",
-   "version": "1.2.0",
+   "description": "SIMASM - Assembler and machine language for SIMCPU",
+   "version": "2.1.0",
+   "activationEvents": [
+      "onStartupFinished"
+   ],
+   "main": "./extension.js",
    "engines": {
       "vscode": "^1.99.3"
    },
    "categories": [
-      "Programming Languages",
-      "Themes"
+      "Programming Languages"
    ],
    "contributes": {
       "languages": [
@@ -45,7 +48,31 @@
             "language": "simasm",
             "path": "./snippets/simasm.code-snippets"
          }
-      ]
+      ],
+      "commands": [
+         {
+            "command": "extension.formatDocument",
+            "title": "Format SIMASM Document"
+         },
+         {
+            "command": "extension.toggleFormattingStyle",
+            "title": "Toggle SIMASM Formatting Mode"
+         }
+      ],
+      "configuration": {
+         "title": "SIMASM",
+         "properties": {
+            "simasm.formattingStyle": {
+               "type": "string",
+               "enum": [
+                  "full",
+                  "compact"
+               ],
+               "default": "full",
+               "description": "Stile di formattazione: 'full' allinea etichetta, istruzione e operandi. 'compact' solo etichetta e istruzione."
+            }
+         }
+      }
    },
    "repository": {
       "type": "git",
