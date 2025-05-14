@@ -1,212 +1,212 @@
 {
   "LDWI": {
     "prefix": "LDWI",
-    "body": ["LDWI ${1:d}, ${2:X}"],
-    "description": "Load word immediate: d <- X"
+    "body": ["LDWI ${1:d} ${2:X}"],
+    "description": "Load word immediate: d <- X | Flags: Z,D; N,D; C,-; V,-"
   },
   "LDWA": {
     "prefix": "LDWA",
-    "body": ["LDWA ${1:d}, ${2:A}"],
-    "description": "Load word from memory (absolute address): d <- mem[A]"
+    "body": ["LDWA ${1:d} ${2:A}"],
+    "description": "Load word from memory (absolute address): d <- mem[A] | Flags: Z,D; N,D; C,-; V,-"
   },
   "LDWR": {
     "prefix": "LDWR",
-    "body": ["LDWR ${1:d}, ${2:a}"],
-    "description": "Load word from memory (register address): d <- mem[a]"
+    "body": ["LDWR ${1:d} ${2:a}"],
+    "description": "Load word from memory (register address): d <- mem[a] | Flags: Z,D; N,D; C,-; V,-"
   },
   "LDBI": {
     "prefix": "LDBI",
-    "body": ["LDBI ${1:d}, ${2:X}"],
-    "description": "Load byte immediate: d <- X"
+    "body": ["LDBI ${1:d} ${2:X}"],
+    "description": "Load byte immediate: d <- X | Flags: Z,D; N,-; C,-; V,-"
   },
   "LDBA": {
     "prefix": "LDBA",
-    "body": ["LDBA ${1:d}, ${2:A}"],
-    "description": "Load byte from memory (absolute address): d <- mem[A]"
+    "body": ["LDBA ${1:d} ${2:A}"],
+    "description": "Load byte from memory (absolute address): d <- mem[A] | Flags: Z,D; N,-; C,-; V,-"
   },
   "LDBR": {
     "prefix": "LDBR",
-    "body": ["LDBR ${1:d}, ${2:a}"],
-    "description": "Load byte from memory (register address): d <- mem[a]"
+    "body": ["LDBR ${1:d} ${2:a}"],
+    "description": "Load byte from memory (register address): d <- mem[a] | Flags: Z,D; N,-; C,-; V,-"
   },
   "STWA": {
     "prefix": "STWA",
-    "body": ["STWA ${1:s}, ${2:A}"],
-    "description": "Store word to memory (absolute address): mem[A] <- s"
+    "body": ["STWA ${1:s} ${2:A}"],
+    "description": "Store word to memory (absolute address): mem[A] <- s | Flags: Z,-; N,-; C,-; V,-"
   },
   "STWR": {
     "prefix": "STWR",
-    "body": ["STWR ${1:s}, ${2:a}"],
-    "description": "Store word to memory (register address): mem[a] <- s"
+    "body": ["STWR ${1:s} ${2:a}"],
+    "description": "Store word to memory (register address): mem[a] <- s | Flags: Z,-; N,-; C,-; V,-"
   },
   "STBA": {
     "prefix": "STBA",
-    "body": ["STBA ${1:s}, ${2:A}"],
-    "description": "Store byte to memory (absolute address): mem[A] <- s"
+    "body": ["STBA ${1:s} ${2:A}"],
+    "description": "Store byte to memory (absolute address): mem[A] <- s | Flags: Z,-; N,-; C,-; V,-"
   },
   "STBR": {
     "prefix": "STBR",
-    "body": ["STBR ${1:s}, ${2:a}"],
-    "description": "Store byte to memory (register address): mem[a] <- s"
+    "body": ["STBR ${1:s} ${2:a}"],
+    "description": "Store byte to memory (register address): mem[a] <- s | Flags: Z,-; N,-; C,-; V,-"
   },
   "MV": {
     "prefix": "MV",
-    "body": ["MV ${1:s}, ${2:d}"],
-    "description": "Move from register s to d: d <- s"
+    "body": ["MV ${1:s} ${2:d}"],
+    "description": "Move from register s to d: d <- s | Flags: Z,D; N,D; C,-; V,-"
   },
   "PUSH": {
     "prefix": "PUSH",
     "body": ["PUSH ${1:s}"],
-    "description": "Push value from s to stack"
+    "description": "Push value from s to stack | Flags: Z,-; N,-; C,-; V,-"
   },
   "POP": {
     "prefix": "POP",
     "body": ["POP ${1:d}"],
-    "description": "Pop value into d from stack"
+    "description": "Pop value into d from stack | Flags: Z,D; N,D; C,-; V,-"
   },
   "SPRD": {
     "prefix": "SPRD",
     "body": ["SPRD ${1:d}"],
-    "description": "Read SP into d"
+    "description": "Read SP into d | Flags: Z,D; N,D; C,-; V,-"
   },
   "SPWR": {
     "prefix": "SPWR",
     "body": ["SPWR ${1:s}"],
-    "description": "Write s into SP"
+    "description": "Write s into SP | Flags: Z,-; N,-; C,-; V,-"
   },
   "ADD": {
     "prefix": "ADD",
-    "body": ["ADD ${1:s}, ${2:d}"],
-    "description": "Add s to d: d <- d + s"
+    "body": ["ADD ${1:s} ${2:d}"],
+    "description": "Add s to d: d <- d + s | Flags: Z,D; N,D; C,D; V,D"
   },
   "SUB": {
     "prefix": "SUB",
-    "body": ["SUB ${1:s}, ${2:d}"],
-    "description": "Subtract s from d: d <- d - s"
+    "body": ["SUB ${1:s} ${2:d}"],
+    "description": "Subtract s from d: d <- d - s | Flags: Z,D; N,D; C,D; V,D"
   },
   "NOT": {
     "prefix": "NOT",
     "body": ["NOT ${1:r}"],
-    "description": "Bitwise NOT: r <- ~r"
+    "description": "Bitwise NOT: r <- ~r | Flags: Z,D; N,D; C,0; V,0"
   },
   "AND": {
     "prefix": "AND",
-    "body": ["AND ${1:s}, ${2:d}"],
-    "description": "Bitwise AND: d <- d & s"
+    "body": ["AND ${1:s} ${2:d}"],
+    "description": "Bitwise AND: d <- d & s | Flags: Z,D; N,D; C,0; V,0"
   },
   "OR": {
     "prefix": "OR",
-    "body": ["OR ${1:s}, ${2:d}"],
-    "description": "Bitwise OR: d <- d | s"
+    "body": ["OR ${1:s} ${2:d}"],
+    "description": "Bitwise OR: d <- d | s | Flags: Z,D; N,D; C,0; V,0"
   },
   "XOR": {
     "prefix": "XOR",
-    "body": ["XOR ${1:s}, ${2:d}"],
-    "description": "Bitwise XOR: d <- d ^ s"
+    "body": ["XOR ${1:s} ${2:d}"],
+    "description": "Bitwise XOR: d <- d ^ s | Flags: Z,D; N,D; C,0; V,0"
   },
   "INC": {
     "prefix": "INC",
     "body": ["INC ${1:r}"],
-    "description": "Increment: r <- r + 1"
+    "description": "Increment: r <- r + 1 | Flags: Z,D; N,D; C,D; V,D"
   },
   "DEC": {
     "prefix": "DEC",
     "body": ["DEC ${1:r}"],
-    "description": "Decrement: r <- r - 1"
+    "description": "Decrement: r <- r - 1 | Flags: Z,D; N,D; C,D; V,D"
   },
   "LSH": {
     "prefix": "LSH",
     "body": ["LSH ${1:r}"],
-    "description": "Left shift: r <- r << 1"
+    "description": "Left shift: r <- r << 1 | Flags: Z,D; N,D; C,D; V,0"
   },
   "RSH": {
     "prefix": "RSH",
     "body": ["RSH ${1:r}"],
-    "description": "Right shift: r <- r >> 1"
+    "description": "Right shift: r <- r >> 1 | Flags: Z,D; N,D; C,D; V,0"
   },
   "INW": {
     "prefix": "INW",
-    "body": ["INW ${1:d}, ${2:A}"],
-    "description": "Input word: d <- read[A]"
+    "body": ["INW ${1:d} ${2:A}"],
+    "description": "Input word: d <- read[A] | Flags: Z,D; N,D; C,-; V,-"
   },
   "INB": {
     "prefix": "INB",
-    "body": ["INB ${1:d}, ${2:A}"],
-    "description": "Input byte: d <- read[A]"
+    "body": ["INB ${1:d} ${2:A}"],
+    "description": "Input byte: d <- read[A] | Flags: Z,D; N,D; C,-; V,-"
   },
   "OUTW": {
     "prefix": "OUTW",
-    "body": ["OUTW ${1:s}, ${2:A}"],
-    "description": "Output word: out[A] <- s"
+    "body": ["OUTW ${1:s} ${2:A}"],
+    "description": "Output word: out[A] <- s | Flags: Z,-; N,-; C,-; V,-"
   },
   "OUTB": {
     "prefix": "OUTB",
-    "body": ["OUTB ${1:s}, ${2:A}"],
-    "description": "Output byte: out[A] <- s"
+    "body": ["OUTB ${1:s} ${2:A}"],
+    "description": "Output byte: out[A] <- s | Flags: Z,-; N,-; C,-; V,-"
   },
   "TSTI": {
     "prefix": "TSTI",
     "body": ["TSTI ${1:A}"],
-    "description": "Test input: if completed then Z <- 1 else Z <- 0"
+    "description": "Test input: if completed then Z <- 1 else Z <- 0 | Flags: Z,D; N,-; C,-; V,-"
   },
   "TSTO": {
     "prefix": "TSTO",
     "body": ["TSTO ${1:A}"],
-    "description": "Test output: if completed then Z <- 1 else Z <- 0"
+    "description": "Test output: if completed then Z <- 1 else Z <- 0 | Flags: Z,D; N,-; C,-; V,-"
   },
   "BR": {
     "prefix": "BR",
     "body": ["BR ${1:A}"],
-    "description": "Branch to absolute address: PC <- A"
+    "description": "Branch to absolute address: PC <- A | Flags: Z,-; N,-; C,-; V,-"
   },
   "JMP": {
     "prefix": "JMP",
     "body": ["JMP ${1:F}"],
-    "description": "Jump relative: PC <- PC + F"
+    "description": "Jump relative: PC <- PC + F | Flags: Z,-; N,-; C,-; V,-"
   },
   "JMPZ": {
     "prefix": "JMPZ",
     "body": ["JMPZ ${1:F}"],
-    "description": "Jump if zero: if Z == 1, PC <- PC + F"
+    "description": "Jump if zero: if Z == 1, PC <- PC + F | Flags: Z,-; N,-; C,-; V,-"
   },
   "JMPNZ": {
     "prefix": "JMPNZ",
     "body": ["JMPNZ ${1:F}"],
-    "description": "Jump if not zero: if Z == 0, PC <- PC + F"
+    "description": "Jump if not zero: if Z == 0, PC <- PC + F | Flags: Z,-; N,-; C,-; V,-"
   },
   "JMPN": {
     "prefix": "JMPN",
     "body": ["JMPN ${1:F}"],
-    "description": "Jump if negative: if N == 1, PC <- PC + F"
+    "description": "Jump if negative: if N == 1, PC <- PC + F | Flags: Z,-; N,-; C,-; V,-"
   },
   "JMPNN": {
     "prefix": "JMPNN",
     "body": ["JMPNN ${1:F}"],
-    "description": "Jump if not negative: if N == 0, PC <- PC + F"
+    "description": "Jump if not negative: if N == 0, PC <- PC + F | Flags: Z,-; N,-; C,-; V,-"
   },
   "JMPC": {
     "prefix": "JMPC",
     "body": ["JMPC ${1:F}"],
-    "description": "Jump if carry: if C == 1, PC <- PC + F"
+    "description": "Jump if carry: if C == 1, PC <- PC + F | Flags: Z,-; N,-; C,-; V,-"
   },
   "JMPV": {
     "prefix": "JMPV",
     "body": ["JMPV ${1:F}"],
-    "description": "Jump if overflow: if V == 1, PC <- PC + F"
+    "description": "Jump if overflow: if V == 1, PC <- PC + F | Flags: Z,-; N,-; C,-; V,-"
   },
   "CALL": {
     "prefix": "CALL",
     "body": ["CALL ${1:A}"],
-    "description": "Call subroutine: push(PC); PC <- A"
+    "description": "Call subroutine: push(PC); PC <- A | Flags: Z,-; N,-; C,-; V,-"
   },
   "RET": {
     "prefix": "RET",
     "body": ["RET"],
-    "description": "Return from subroutine: PC <- pop()"
+    "description": "Return from subroutine: PC <- pop() | Flags: Z,-; N,-; C,-; V,-"
   },
   "HLT": {
     "prefix": "HLT",
     "body": ["HLT"],
-    "description": "Halt execution"
+    "description": "Halt execution | Flags: Z,-; N,-; C,-; V,-"
   }
 }
