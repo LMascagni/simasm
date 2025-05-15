@@ -251,6 +251,30 @@ function activate(context) {
       openInstructionsPanel(context);
     })
   );
+
+  // Definition Provider
+  const definitionProvider = vscode.languages.registerDefinitionProvider('simasm', {
+    provideDefinition(document, position, token) {
+      const wordRange = document.getWordRangeAtPosition(position, /\b[A-Za-z_][\w]*\b/);
+      if (!wordRange) return;
+
+      const word = document.getText(wordRange);
+      const text = document.getText();
+
+      // Cerca la definizione dell'etichetta (es. "label:")
+      const labelRegex = new RegExp(`^\\s*(${word}):`, 'gm');
+      let match;
+      while ((match = labelRegex.exec(text)) !== null) {
+        const startPos = document.positionAt(match.index);
+        const endPos = document.positionAt(match.index + match[0].length);
+        return new vscode.Location(document.uri, new vscode.Range(startPos, endPos));
+      }
+
+      return null;
+    }
+  });
+
+  context.subscriptions.push(definitionProvider);
 }
 
 function deactivate() { }
