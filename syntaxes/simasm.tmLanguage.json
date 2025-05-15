@@ -2,8 +2,7 @@
    "name": "SIMASM",
    "scopeName": "source.simasm",
    "fileTypes": [
-      "axx",
-      "asm"
+      "axx"
    ],
    "patterns": [
       {

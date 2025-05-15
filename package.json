@@ -4,7 +4,7 @@
   "displayName": "simcpu-asm",
   "description": "SIMASM - Assembler and machine language for SIMCPU",
   "icon": "images/icon.png",
-  "version": "4.0.1",
+  "version": "4.1.2",
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -24,8 +24,7 @@
           "simasm"
         ],
         "extensions": [
-          ".axx",
-          ".asm"
+          ".axx"
         ],
         "configuration": "./language-configuration.json"
       }
