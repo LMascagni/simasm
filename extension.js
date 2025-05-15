@@ -4,48 +4,48 @@ let formattingStyle = 'full';
 
 // Dizionario istruzioni SIMASM con descrizioni in italiano
 const instructionDocs = {
-   LDWI: { description: 'Carica un word immediato nel registro R.', arguments: 'R, valore', machineCode: '', flags: 'Z, N' },
-   LDWA: { description: 'Carica un word da memoria al registro R.', arguments: 'R, indirizzo', machineCode: '', flags: 'Z, N' },
-   LDWR: { description: 'Carica un word dall’indirizzo in R2 nel registro R1.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N' },
-   LDBI: { description: 'Carica un byte immediato nel registro R.', arguments: 'R, valore', machineCode: '', flags: 'Z' },
-   LDBA: { description: 'Carica un byte da memoria nel registro R.', arguments: 'R, indirizzo', machineCode: '', flags: 'Z' },
-   LDBR: { description: 'Carica un byte dall’indirizzo in R2 nel registro R1.', arguments: 'R1, R2', machineCode: '', flags: 'Z' },
-   STWA: { description: 'Salva un word da R nella memoria.', arguments: 'R, indirizzo', machineCode: '', flags: 'nessuna' },
-   STWR: { description: 'Salva un word da R1 all’indirizzo in R2.', arguments: 'R1, R2', machineCode: '', flags: 'nessuna' },
-   STBA: { description: 'Salva un byte da R nella memoria.', arguments: 'R, indirizzo', machineCode: '', flags: 'nessuna' },
-   STBR: { description: 'Salva un byte da R1 all’indirizzo in R2.', arguments: 'R1, R2', machineCode: '', flags: 'nessuna' },
-   MV: { description: 'Copia R2 in R1.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N' },
-   PUSH: { description: 'Inserisce il valore di R nello stack.', arguments: 'R', machineCode: '', flags: 'nessuna' },
-   POP: { description: 'Estrae un valore dallo stack in R.', arguments: 'R', machineCode: '', flags: 'Z, N' },
-   SPRD: { description: 'Copia SP in R.', arguments: 'R', machineCode: '', flags: 'Z, N' },
-   SPWR: { description: 'Scrive R nello stack pointer.', arguments: 'R', machineCode: '', flags: 'nessuna' },
-   ADD: { description: 'R1 ← R1 + R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N, C, V' },
-   SUB: { description: 'R1 ← R1 - R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N, C, V' },
-   NOT: { description: 'Inverte i bit di R.', arguments: 'R', machineCode: '', flags: 'Z, N; C e V azzerati' },
-   AND: { description: 'Bitwise AND tra R1 e R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N; C e V azzerati' },
-   OR: { description: 'Bitwise OR tra R1 e R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N; C e V azzerati' },
-   XOR: { description: 'Bitwise XOR tra R1 e R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N; C e V azzerati' },
-   INC: { description: 'Incrementa R.', arguments: 'R', machineCode: '', flags: 'Z, N, C, V' },
-   DEC: { description: 'Decrementa R.', arguments: 'R', machineCode: '', flags: 'Z, N, C, V' },
-   LSH: { description: 'Shift logico sinistro.', arguments: 'R', machineCode: '', flags: 'Z, N, C; V azzerato' },
-   RSH: { description: 'Shift logico destro.', arguments: 'R', machineCode: '', flags: 'Z, N, C; V azzerato' },
-   INW: { description: 'Input word da porta A in R.', arguments: 'R, A', machineCode: '', flags: 'Z, N' },
-   INB: { description: 'Input byte da porta A in R.', arguments: 'R, A', machineCode: '', flags: 'Z, N' },
-   OUTW: { description: 'Output word da R alla porta A.', arguments: 'R, A', machineCode: '', flags: 'nessuna' },
-   OUTB: { description: 'Output byte da R alla porta A.', arguments: 'R, A', machineCode: '', flags: 'nessuna' },
-   TSTI: { description: 'Test input pronto su porta A.', arguments: 'A', machineCode: '', flags: 'Z' },
-   TSTO: { description: 'Test output pronto su porta A.', arguments: 'A', machineCode: '', flags: 'Z' },
-   BR: { description: 'Salta all’indirizzo assoluto.', arguments: 'indirizzo', machineCode: '', flags: 'nessuna' },
-   JMP: { description: 'Salta relativo (PC + offset).', arguments: 'offset', machineCode: '', flags: 'nessuna' },
-   JMPZ: { description: 'Salta se Z = 1.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
-   JMPNZ: { description: 'Salta se Z = 0.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
-   JMPN: { description: 'Salta se N = 1.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
-   JMPNN: { description: 'Salta se N = 0.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
-   JMPC: { description: 'Salta se C = 1.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
-   JMPV: { description: 'Salta se V = 1.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
-   CALL: { description: 'Salva PC e salta a subroutine.', arguments: 'indirizzo', machineCode: '', flags: 'nessuna' },
-   RET: { description: 'Ritorna da subroutine (PC ← pop).', arguments: '', machineCode: '', flags: 'nessuna' },
-   HLT: { description: 'Ferma l’esecuzione del programma.', arguments: '', machineCode: '', flags: 'nessuna' }
+   LDWI:  { description: 'Carica un word immediato nel registro R.',             arguments: 'R, valore',    machineCode: '00010000dddd0000 DATA(16)',     flags: 'Z, N' },
+   LDWA:  { description: 'Carica un word da memoria al registro R.',             arguments: 'R, indirizzo', machineCode: '00100000dddd0000 ADDR(16)',     flags: 'Z, N' },
+   LDWR:  { description: 'Carica un word dall’indirizzo in R2 nel registro R1.', arguments: 'R1, R2',       machineCode: '00110000ddddaaaa',              flags: 'Z, N' },
+   LDBI:  { description: 'Carica un byte immediato nel registro R.',             arguments: 'R, valore',    machineCode: '00010001dddd0000 DATA(8) ',     flags: 'Z' },
+   LDBA:  { description: 'Carica un byte da memoria nel registro R.',            arguments: 'R, indirizzo', machineCode: '00100001dddd0000 ADDR(16)',     flags: 'Z' },
+   LDBR:  { description: 'Carica un byte dall’indirizzo in R2 nel registro R1.', arguments: 'R1, R2',       machineCode: '00110001ddddaaaa',              flags: 'Z' },
+   STWA:  { description: 'Salva un word da R nella memoria.',                    arguments: 'R, indirizzo', machineCode: '00100010ssss0000 ADDR(16)',     flags: 'nessuna' },
+   STWR:  { description: 'Salva un word da R1 all’indirizzo in R2.',             arguments: 'R1, R2',       machineCode: '00110010ssssaaaa',              flags: 'nessuna' },
+   STBA:  { description: 'Salva un byte da R nella memoria.',                    arguments: 'R, indirizzo', machineCode: '00100011ssss0000 ADDR(16)',     flags: 'nessuna' },
+   STBR:  { description: 'Salva un byte da R1 all’indirizzo in R2.',             arguments: 'R1, R2',       machineCode: '00110011ssssaaaa',              flags: 'nessuna' },
+   MV:    { description: 'Copia R2 in R1.',                                      arguments: 'R1, R2',       machineCode: '00000100ssssdddd',              flags: 'Z, N' },
+   PUSH:  { description: 'Inserisce il valore di R nello stack.',                arguments: 'R',            machineCode: '00001000ssss0000',              flags: 'nessuna' },
+   POP:   { description: 'Estrae un valore dallo stack in R.',                   arguments: 'R',            machineCode: '00001001dddd0000',              flags: 'Z, N' },
+   SPRD:  { description: 'Copia SP in R.',                                       arguments: 'R',            machineCode: '00001101dddd0000',              flags: 'Z, N' },
+   SPWR:  { description: 'Scrive R nello stack pointer.',                        arguments: 'R',            machineCode: '00001110ssss0000',              flags: 'nessuna' },
+   ADD:   { description: 'R1 ← R1 + R2.',                                        arguments: 'R1, R2',       machineCode: '01000000ssssdddd',              flags: 'Z, N, C, V' },
+   SUB:   { description: 'R1 ← R1 - R2.',                                        arguments: 'R1, R2',       machineCode: '01000001ssssdddd',              flags: 'Z, N, C, V' },
+   NOT:   { description: 'Inverte i bit di R.',                                  arguments: 'R',            machineCode: '01000010rrrr0000',              flags: 'Z, N; C e V azzerati' },
+   AND:   { description: 'Bitwise AND tra R1 e R2.',                             arguments: 'R1, R2',       machineCode: '01000011ssssdddd',              flags: 'Z, N; C e V azzerati' },
+   OR:    { description: 'Bitwise OR tra R1 e R2.',                              arguments: 'R1, R2',       machineCode: '01000100ssssdddd',              flags: 'Z, N; C e V azzerati' },
+   XOR:   { description: 'Bitwise XOR tra R1 e R2.',                             arguments: 'R1, R2',       machineCode: '01000101ssssdddd',              flags: 'Z, N; C e V azzerati' },
+   INC:   { description: 'Incrementa R.',                                        arguments: 'R',            machineCode: '01001000rrrr0000',              flags: 'Z, N, C, V' },
+   DEC:   { description: 'Decrementa R.',                                        arguments: 'R',            machineCode: '01001001rrrr0000',              flags: 'Z, N, C, V' },
+   LSH:   { description: 'Shift logico sinistro.',                               arguments: 'R',            machineCode: '01001010rrrr0000',              flags: 'Z, N, C; V azzerato' },
+   RSH:   { description: 'Shift logico destro.',                                 arguments: 'R',            machineCode: '01001011rrrr0000',              flags: 'Z, N, C; V azzerato' },
+   INW:   { description: 'Input word da porta A in R.',                          arguments: 'R, A',         machineCode: '10000000dddd0000 IN_ADDR(16) ', flags: 'Z, N' },
+   INB:   { description: 'Input byte da porta A in R.',                          arguments: 'R, A',         machineCode: '10000001dddd0000 IN_ADDR(16) ', flags: 'Z, N' },
+   OUTW:  { description: 'Output word da R alla porta A.',                       arguments: 'R, A',         machineCode: '10000010ssss0000 OUT_ADDR(16)', flags: 'nessuna' },
+   OUTB:  { description: 'Output byte da R alla porta A.',                       arguments: 'R, A',         machineCode: '10000011ssss0000 OUT_ADDR(16)', flags: 'nessuna' },
+   TSTI:  { description: 'Test input pronto su porta A.',                        arguments: 'A',            machineCode: '1000010000000000 IN_ADDR(16) ', flags: 'Z' },
+   TSTO:  { description: 'Test output pronto su porta A.',                       arguments: 'A',            machineCode: '1000010100000000 OUT_ADDR(16)', flags: 'Z' },
+   BR:    { description: 'Salta all’indirizzo assoluto.',                        arguments: 'indirizzo',    machineCode: '1100000000000000 ADDR(16)',     flags: 'nessuna' },
+   JMP:   { description: 'Salta relativo (PC + offset).',                        arguments: 'offset',       machineCode: '11000001FFFFFFFF',              flags: 'nessuna' },
+   JMPZ:  { description: 'Salta se Z = 1.',                                      arguments: 'offset',       machineCode: '11000010FFFFFFFF',              flags: 'nessuna' },
+   JMPNZ: { description: 'Salta se Z = 0.',                                      arguments: 'offset',       machineCode: '11000011FFFFFFFF',              flags: 'nessuna' },
+   JMPN:  { description: 'Salta se N = 1.',                                      arguments: 'offset',       machineCode: '11000100FFFFFFFF',              flags: 'nessuna' },
+   JMPNN: { description: 'Salta se N = 0.',                                      arguments: 'offset',       machineCode: '11000101FFFFFFFF',              flags: 'nessuna' },
+   JMPC:  { description: 'Salta se C = 1.',                                      arguments: 'offset',       machineCode: '11000110FFFFFFFF',              flags: 'nessuna' },
+   JMPV:  { description: 'Salta se V = 1.',                                      arguments: 'offset',       machineCode: '11000111FFFFFFFF',              flags: 'nessuna' },
+   CALL:  { description: 'Salva PC e salta a subroutine.',                       arguments: 'indirizzo',    machineCode: '1100100000000000 ADDR(16)',     flags: 'nessuna' },
+   RET:   { description: 'Ritorna da subroutine (PC ← pop).',                    arguments: '',             machineCode: '1100100100000000',              flags: 'nessuna' },
+   HLT:   { description: 'Ferma l’esecuzione del programma.',                    arguments: '',             machineCode: '1100111100000000',              flags: 'nessuna' }
 };
 
 
@@ -142,27 +142,24 @@ function activate(context) {
 
             let label = '', inst = '', op1 = '', op2 = '', comment = '';
 
-            // Special handling for comments
+            // Gestione speciale per righe che sono interamente commenti
             if (/^\s*;/.test(raw)) {
-               // If it starts with two semicolons, keep it without padding
-               if (/^\s*;;/.test(raw)) {
-                  comment = raw.trim();
-               }
-               // If it's just a single semicolon, it will be aligned with other comments
-               else if (/^\s*;[^;].*$/.test(raw) || raw.trim() === ';') {
-                  label = '';
-                  inst = '';
-                  op1 = '';
-                  op2 = '';
-                  comment = raw.trim();
-               }
+               // Se inizia con punto e virgola, è un commento
+               comment = raw.trim();
             } else {
-               const match = raw.match(/^\s*([A-Za-z_][\w]*:)?\s*(\S+)?(?:\s+(\S+))?(?:\s+(\S+))?\s*(;.*)?$/);
-               label = match?.[1]?.trim() || '';
-               inst = match?.[2]?.trim() || '';
-               op1 = match?.[3]?.trim() || '';
-               op2 = match?.[4]?.trim() || '';
-               comment = match?.[5]?.trim() || '';
+               // Prima separa la parte di codice dal commento
+               const commentIndex = raw.indexOf(';');
+               const codePart = commentIndex >= 0 ? raw.substring(0, commentIndex).trim() : raw.trim();
+               comment = commentIndex >= 0 ? raw.substring(commentIndex).trim() : '';
+
+               // Poi analizza la parte del codice
+               if (codePart) {
+                  const match = codePart.match(/^\s*([A-Za-z_][\w]*:)?\s*(\S+)?(?:\s+(\S+))?(?:\s+(\S+))?$/);
+                  label = match?.[1]?.trim() || '';
+                  inst = match?.[2]?.trim() || '';
+                  op1 = match?.[3]?.trim() || '';
+                  op2 = match?.[4]?.trim() || '';
+               }
             }
 
             lines.push({ line, label, inst, op1, op2, comment });
@@ -195,7 +192,8 @@ function activate(context) {
             let formatted = '';
 
             // Handle special comment cases
-            if (/^;;/.test(comment)) {
+            if (/^;;/.test(comment) && !label && !inst && !op1 && !op2) {
+               // Solo per righe che contengono SOLO commenti che iniziano con ;;
                formatted = comment;
             } else if (comment && !label && !inst && !op1 && !op2) {
                // Allinea tutti i commenti singoli (incluso solo ;) con maxCodeWidth
