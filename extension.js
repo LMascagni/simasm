@@ -4,49 +4,50 @@ let formattingStyle = 'full';
 
 // Dizionario istruzioni SIMASM con descrizioni in italiano
 const instructionDocs = {
-  LDWI: 'LDWI R, valore — Carica un word immediato nel registro R. Flag: Z, N',
-  LDWA: 'LDWA R, indirizzo — Carica un word da memoria al registro R. Flag: Z, N',
-  LDWR: 'LDWR R1, R2 — Carica un word dall’indirizzo in R2 nel registro R1. Flag: Z, N',
-  LDBI: 'LDBI R, valore — Carica un byte immediato nel registro R. Flag: Z',
-  LDBA: 'LDBA R, indirizzo — Carica un byte da memoria nel registro R. Flag: Z',
-  LDBR: 'LDBR R1, R2 — Carica un byte dall’indirizzo in R2 nel registro R1. Flag: Z',
-  STWA: 'STWA R, indirizzo — Salva un word da R nella memoria. Flag: nessuna',
-  STWR: 'STWR R1, R2 — Salva un word da R1 all’indirizzo in R2. Flag: nessuna',
-  STBA: 'STBA R, indirizzo — Salva un byte da R nella memoria. Flag: nessuna',
-  STBR: 'STBR R1, R2 — Salva un byte da R1 all’indirizzo in R2. Flag: nessuna',
-  MV: 'MV R1, R2 — Copia R2 in R1. Flag: Z, N',
-  PUSH: 'PUSH R — Inserisce il valore di R nello stack. Flag: nessuna',
-  POP: 'POP R — Estrae un valore dallo stack in R. Flag: Z, N',
-  SPRD: 'SPRD R — Copia SP in R. Flag: Z, N',
-  SPWR: 'SPWR R — Scrive R nello stack pointer. Flag: nessuna',
-  ADD: 'ADD R1, R2 — R1 ← R1 + R2. Flag: Z, N, C, V',
-  SUB: 'SUB R1, R2 — R1 ← R1 - R2. Flag: Z, N, C, V',
-  NOT: 'NOT R — Inverte i bit di R. Flag: Z, N; C e V azzerati',
-  AND: 'AND R1, R2 — Bitwise AND tra R1 e R2. Flag: Z, N; C e V azzerati',
-  OR: 'OR R1, R2 — Bitwise OR tra R1 e R2. Flag: Z, N; C e V azzerati',
-  XOR: 'XOR R1, R2 — Bitwise XOR tra R1 e R2. Flag: Z, N; C e V azzerati',
-  INC: 'INC R — Incrementa R. Flag: Z, N, C, V',
-  DEC: 'DEC R — Decrementa R. Flag: Z, N, C, V',
-  LSH: 'LSH R — Shift logico sinistro. Flag: Z, N, C; V azzerato',
-  RSH: 'RSH R — Shift logico destro. Flag: Z, N, C; V azzerato',
-  INW: 'INW R, A — Input word da porta A in R. Flag: Z, N',
-  INB: 'INB R, A — Input byte da porta A in R. Flag: Z, N',
-  OUTW: 'OUTW R, A — Output word da R alla porta A. Flag: nessuna',
-  OUTB: 'OUTB R, A — Output byte da R alla porta A. Flag: nessuna',
-  TSTI: 'TSTI A — Test input pronto su porta A. Flag: Z',
-  TSTO: 'TSTO A — Test output pronto su porta A. Flag: Z',
-  BR: 'BR indirizzo — Salta all’indirizzo assoluto. Flag: nessuna',
-  JMP: 'JMP offset — Salta relativo (PC + offset). Flag: nessuna',
-  JMPZ: 'JMPZ offset — Salta se Z = 1. Flag: nessuna',
-  JMPNZ: 'JMPNZ offset — Salta se Z = 0. Flag: nessuna',
-  JMPN: 'JMPN offset — Salta se N = 1. Flag: nessuna',
-  JMPNN: 'JMPNN offset — Salta se N = 0. Flag: nessuna',
-  JMPC: 'JMPC offset — Salta se C = 1. Flag: nessuna',
-  JMPV: 'JMPV offset — Salta se V = 1. Flag: nessuna',
-  CALL: 'CALL indirizzo — Salva PC e salta a subroutine. Flag: nessuna',
-  RET: 'RET — Ritorna da subroutine (PC ← pop). Flag: nessuna',
-  HLT: 'HLT — Ferma l’esecuzione del programma. Flag: nessuna'
+  LDWI: { description: 'Carica un word immediato nel registro R.', arguments: 'R, valore', machineCode: '', flags: 'Z, N' },
+  LDWA: { description: 'Carica un word da memoria al registro R.', arguments: 'R, indirizzo', machineCode: '', flags: 'Z, N' },
+  LDWR: { description: 'Carica un word dall’indirizzo in R2 nel registro R1.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N' },
+  LDBI: { description: 'Carica un byte immediato nel registro R.', arguments: 'R, valore', machineCode: '', flags: 'Z' },
+  LDBA: { description: 'Carica un byte da memoria nel registro R.', arguments: 'R, indirizzo', machineCode: '', flags: 'Z' },
+  LDBR: { description: 'Carica un byte dall’indirizzo in R2 nel registro R1.', arguments: 'R1, R2', machineCode: '', flags: 'Z' },
+  STWA: { description: 'Salva un word da R nella memoria.', arguments: 'R, indirizzo', machineCode: '', flags: 'nessuna' },
+  STWR: { description: 'Salva un word da R1 all’indirizzo in R2.', arguments: 'R1, R2', machineCode: '', flags: 'nessuna' },
+  STBA: { description: 'Salva un byte da R nella memoria.', arguments: 'R, indirizzo', machineCode: '', flags: 'nessuna' },
+  STBR: { description: 'Salva un byte da R1 all’indirizzo in R2.', arguments: 'R1, R2', machineCode: '', flags: 'nessuna' },
+  MV: { description: 'Copia R2 in R1.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N' },
+  PUSH: { description: 'Inserisce il valore di R nello stack.', arguments: 'R', machineCode: '', flags: 'nessuna' },
+  POP: { description: 'Estrae un valore dallo stack in R.', arguments: 'R', machineCode: '', flags: 'Z, N' },
+  SPRD: { description: 'Copia SP in R.', arguments: 'R', machineCode: '', flags: 'Z, N' },
+  SPWR: { description: 'Scrive R nello stack pointer.', arguments: 'R', machineCode: '', flags: 'nessuna' },
+  ADD: { description: 'R1 ← R1 + R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N, C, V' },
+  SUB: { description: 'R1 ← R1 - R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N, C, V' },
+  NOT: { description: 'Inverte i bit di R.', arguments: 'R', machineCode: '', flags: 'Z, N; C e V azzerati' },
+  AND: { description: 'Bitwise AND tra R1 e R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N; C e V azzerati' },
+  OR: { description: 'Bitwise OR tra R1 e R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N; C e V azzerati' },
+  XOR: { description: 'Bitwise XOR tra R1 e R2.', arguments: 'R1, R2', machineCode: '', flags: 'Z, N; C e V azzerati' },
+  INC: { description: 'Incrementa R.', arguments: 'R', machineCode: '', flags: 'Z, N, C, V' },
+  DEC: { description: 'Decrementa R.', arguments: 'R', machineCode: '', flags: 'Z, N, C, V' },
+  LSH: { description: 'Shift logico sinistro.', arguments: 'R', machineCode: '', flags: 'Z, N, C; V azzerato' },
+  RSH: { description: 'Shift logico destro.', arguments: 'R', machineCode: '', flags: 'Z, N, C; V azzerato' },
+  INW: { description: 'Input word da porta A in R.', arguments: 'R, A', machineCode: '', flags: 'Z, N' },
+  INB: { description: 'Input byte da porta A in R.', arguments: 'R, A', machineCode: '', flags: 'Z, N' },
+  OUTW: { description: 'Output word da R alla porta A.', arguments: 'R, A', machineCode: '', flags: 'nessuna' },
+  OUTB: { description: 'Output byte da R alla porta A.', arguments: 'R, A', machineCode: '', flags: 'nessuna' },
+  TSTI: { description: 'Test input pronto su porta A.', arguments: 'A', machineCode: '', flags: 'Z' },
+  TSTO: { description: 'Test output pronto su porta A.', arguments: 'A', machineCode: '', flags: 'Z' },
+  BR: { description: 'Salta all’indirizzo assoluto.', arguments: 'indirizzo', machineCode: '', flags: 'nessuna' },
+  JMP: { description: 'Salta relativo (PC + offset).', arguments: 'offset', machineCode: '', flags: 'nessuna' },
+  JMPZ: { description: 'Salta se Z = 1.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
+  JMPNZ: { description: 'Salta se Z = 0.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
+  JMPN: { description: 'Salta se N = 1.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
+  JMPNN: { description: 'Salta se N = 0.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
+  JMPC: { description: 'Salta se C = 1.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
+  JMPV: { description: 'Salta se V = 1.', arguments: 'offset', machineCode: '', flags: 'nessuna' },
+  CALL: { description: 'Salva PC e salta a subroutine.', arguments: 'indirizzo', machineCode: '', flags: 'nessuna' },
+  RET: { description: 'Ritorna da subroutine (PC ← pop).', arguments: '', machineCode: '', flags: 'nessuna' },
+  HLT: { description: 'Ferma l’esecuzione del programma.', arguments: '', machineCode: '', flags: 'nessuna' }
 };
+
 
 
 function getFormattingStyle(context) {
@@ -68,9 +69,10 @@ function openInstructionsPanel(context) {
   );
 
   // Crea una tabella HTML
-  const tableRows = Object.entries(instructionDocs).map(([name, description]) => {
-    return `<tr><td>${name}</td><td>${description}</td></tr>`;
+  const tableRows = Object.entries(instructionDocs).map(([name, { description, arguments, machineCode, flags }]) => {
+    return `<tr><td>${name}</td><td>${description}</td><td>${arguments}</td><td>${machineCode}</td><td>${flags}</td></tr>`;
   }).join('');
+
 
   panel.webview.html = `
     <!DOCTYPE html>
@@ -94,10 +96,10 @@ function openInstructionsPanel(context) {
           border-bottom: 1px solid #ddd;
         }
         th {
-          background-color: #f2f2f2;
+          background-color:rgb(31, 138, 210);
         }
         tr:hover {
-          background-color: #f1f1f1;
+          background-color:rgb(0, 0, 0);
         }
       </style>
     </head>
@@ -106,8 +108,11 @@ function openInstructionsPanel(context) {
       <table>
         <thead>
           <tr>
-            <th>Comando</th>
+            <th>Istruzione</th>
             <th>Descrizione</th>
+            <th>Argomenti</th>
+            <th>Codice Macchina</th>
+            <th>Flag</th>
           </tr>
         </thead>
         <tbody>
@@ -231,10 +236,10 @@ function activate(context) {
 
       const word = document.getText(wordRange).toUpperCase();
       const doc = instructionDocs[word];
-
       if (doc) {
-        return new vscode.Hover(`**${word}** — ${doc}`);
+        return new vscode.Hover(`**${word}** — ${doc.description}\n\n**Argomenti:** ${doc.arguments}\n**Flag:** ${doc.flags}`);
       }
+
     }
   });
 
@@ -248,7 +253,7 @@ function activate(context) {
   );
 }
 
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
   activate,
