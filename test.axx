@@ -1,0 +1,8 @@
+;; Programma dimostrativo - non verrà riallineato
+init:  LOAD   A  0x10    ; inizializza A
+       STORE  A  result  ; salva il risultato
+
+                         ; questo è un commento solitario
+
+;; I commenti con doppio punto e virgola restano fissi
+end:   HALT              ; termina programma

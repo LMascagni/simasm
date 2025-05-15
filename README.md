@@ -7,16 +7,34 @@ Questa estensione è pensata per studenti e docenti, e rende più chiara e produ
 ✅ **Evidenziazione della sintassi**  
 ✅ **Snippet rapidi per tutte le istruzioni**  
 ✅ **Tooltip descrittivi per ogni comando**   
-✅ **Tema scuro personalizzato: “SIMCPU Syntax”**  
+✅ **Formattazione automatica del codice**  
+✅ **Tema scuro personalizzato: "SIMCPU Syntax"**  
+✅ **Navigazione alle definizioni di etichette**  
+✅ **Pannello di riferimento istruzioni**  
 
 ---
 
 ## ✨ Caratteristiche principali
 
+### 📝 Editor
 - **Riconoscimento file**: supporto per `.axx`
 - **Tokenizzazione avanzata**: separa correttamente istruzioni, registri, numeri e tipi
 - **Snippet espandibili**: basta digitare l'istruzione e premere `Tab`
 - **Tema colore incluso**: attivalo da `Preferenze → Tema Colore → SIMCPU Syntax`
+
+### 🔍 Aiuto contestuale
+- **Tooltip informativi**: passa il mouse su un'istruzione per vedere descrizione e flag
+- **Tabella istruzioni**: visualizza tutte le istruzioni con il comando "Show SIMASM Instructions"
+- **Documentazione completa**: include descrizioni, argomenti richiesti e flag influenzati
+
+### 📊 Navigazione
+- **Vai alla definizione**: naviga rapidamente alle etichette (F12 o Ctrl+Click)
+- **Evidenziazione delle parentesi**: facilita la lettura di espressioni complesse
+
+### ⚡ Produttività
+- **Formattazione automatica**: allineamento e indentazione del codice con "Format Document" (Shift+Alt+F)
+- **Due modalità di formattazione**: FULL e COMPACT
+- **Commenti**: supporto per commenti in linea con `;` e commenti speciali con `;;`
 
 ---
 
@@ -24,7 +42,7 @@ Questa estensione è pensata per studenti e docenti, e rende più chiara e produ
 
 1. Installa l'estensione
 2. Apri un file `.axx`
-3. Digita un’istruzione (es. `LDBR`) e premi `Tab` per espandere lo snippet
+3. Digita un'istruzione (es. `LDBR`) e premi `Tab` per espandere lo snippet
 
 > Per migliorare i suggerimenti, si consiglia di disattivare quelli basati sul documento:  
 > `"editor.wordBasedSuggestions": false`
@@ -35,7 +53,7 @@ Questa estensione è pensata per studenti e docenti, e rende più chiara e produ
 
 La formattazione del codice SIMASM avviene automaticamente quando attivi il comando **"Format Document"** (`Shift+Alt+F` oppure clic destro → "Format Document").
 
-L’estensione suddivide ogni riga del codice nei seguenti componenti:
+L'estensione suddivide ogni riga del codice nei seguenti componenti:
 
 - **Etichetta**: facoltativa, deve terminare con `:`
 - **Istruzione**: ad esempio `LOAD`, `STORE`, `JMP`, ecc.
@@ -43,6 +61,15 @@ L’estensione suddivide ogni riga del codice nei seguenti componenti:
 - **Commento**: qualsiasi testo dopo `;`, anche da solo
 
 Ogni sezione viene **allineata automaticamente** in base alla larghezza massima trovata nel documento, rendendo il codice più leggibile.
+
+### 💬 Commenti e formattazione speciale
+
+L'estensione supporta due tipi di commenti con comportamenti diversi:
+
+- **Commenti normali con `;`**: vengono allineati automaticamente secondo le regole di formattazione
+- **Commenti speciali con `;;`**: non vengono riformattati, mantenendo la loro posizione originale
+
+Questa differenza permette di mantenere commenti strutturati (come intestazioni o documentazione) nella loro forma originale, mentre i commenti di codice verranno allineati per una migliore leggibilità.
 
 ### 🔄 Cambiare modalità di formattazione
 
@@ -90,26 +117,46 @@ La modalità selezionata viene salvata automaticamente e sarà applicata a tutti
 #### 🔹 Prima
 
 ```asm
-init:   LOAD A 0x10   ; inizializza A
-        STORE A result
-        ; questo è un commento solitario
-end:    HALT
+;; Programma dimostrativo - non verrà riallineato
+init: LOAD A 0x10 ; inizializza A
+      STORE A result ; salva il risultato
+
+; questo è un commento solitario
+
+;; I commenti con doppio punto e virgola restano fissi
+end: HALT ; termina programma
 ```
 
 🔹 Dopo la formattazione (modalità Full)
 
 ```asm
-init:   LOAD     A       0x10       ; inizializza A
-        STORE    A       result     
-; questo è un commento solitario
-end:    HALT                       
+;; Programma dimostrativo - non verrà riallineato
+init:  LOAD   A  0x10    ; inizializza A
+       STORE  A  result  ; salva il risultato
+
+                         ; questo è un commento solitario
+
+;; I commenti con doppio punto e virgola restano fissi
+end:   HALT              ; termina programma
 ```
 
 ---
 
-## 👨‍🏫 Pensata per l’uso didattico
+## 🧰 Funzionalità speciali
 
+### 📚 Tabella delle istruzioni
+Puoi visualizzare tutte le istruzioni SIMASM con le loro descrizioni e i flag influenzati usando il comando:
+```
+Show SIMASM Instructions
+```
 Tutti i comandi sono documentati, con istruzioni divise per gruppo (trasferimento dati, aritmetica, controllo, I/O) e dettagli sui flag (`Z`, `N`, `C`, `V`) modificati.
+
+### 🏷️ Navigazione alle etichette
+Tieni premuto `Ctrl` e fai clic su un riferimento a un'etichetta per saltare alla sua definizione, oppure posiziona il cursore e premi F12.
+
+---
+
+## 👨‍🏫 Pensata per l'uso didattico
 
 Basata sul lavoro originale di **Pier Luca Montessoro** per il simulatore SIMCPU.  
 Email: montessoro@uniud.it — Web: [www.montessoro.it](http://www.montessoro.it)
