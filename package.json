@@ -3,8 +3,8 @@
   "publisher": "LMascagni",
   "displayName": "simcpu-asm",
   "description": "SIMASM - Assembler and machine language for SIMCPU",
-  "icon": "images/icon_monty.png",
-  "version": "3.9.9",
+  "icon": "images/icon.png",
+  "version": "4.0.1",
   "activationEvents": [
     "onStartupFinished"
   ],
