@@ -156,6 +156,47 @@ Tieni premuto `Ctrl` e fai clic su un riferimento a un'etichetta per saltare all
 
 ---
 
+### 🗂️ Outline View per sezioni ed etichette
+La visualizzazione strutturale del documento organizza il codice in una gerarchia navigabile:
+
+- Visualizza etichette, sezioni e dati in una struttura ad albero
+- Permette di navigare rapidamente in file di grandi dimensioni
+- Organizza automaticamente le etichette sotto le rispettive sezioni
+
+#### Come usare le sezioni
+Per creare sezioni logiche nel codice, usa commenti con questo formato:
+```asm
+; --- NOME SEZIONE ---
+```
+
+Ad esempio:
+```asm
+; --- MAIN PROGRAM ---
+start:
+    LDWI  R0 10
+    
+; --- SUBROUTINES ---
+print:
+    ; codice della subroutine
+
+; --- DATA SECTION ---
+word message 0x1234
+```
+
+Nell'Outline View questo viene visualizzato come:
+```
++ MAIN PROGRAM
+  └─ start
++ SUBROUTINES
+  └─ print
++ DATA SECTION
+  └─ WORD
+```
+
+Questa funzionalità è particolarmente utile per programmi complessi o didattici dove è importante avere una struttura chiara e facilmente navigabile.
+
+---
+
 ## 👨‍🏫 Pensata per l'uso didattico
 
 Basata sul lavoro originale di **Pier Luca Montessoro** per il simulatore SIMCPU.  

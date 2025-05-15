@@ -2,9 +2,9 @@
   "name": "simasm",
   "publisher": "LMascagni",
   "displayName": "simcpu-asm",
-  "description": "SIMASM - Assembler and machine language for SIMCPU",
+  "description": "SIMASM - estensione per il linguaggio di SIMCPU",
   "icon": "images/icon.png",
-  "version": "4.1.4",
+  "version": "4.2.1",
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -74,6 +74,11 @@
           ],
           "default": "full",
           "description": "Stile di formattazione: 'full' allinea etichetta, istruzione e operandi. 'compact' solo etichetta e istruzione."
+        },
+        "simasm.outlineView": {
+          "type": "boolean",
+          "default": true,
+          "description": "Abilita/disabilita la visualizzazione della struttura del documento nell'Outline View"
         }
       }
     }

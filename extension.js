@@ -68,11 +68,38 @@ function openInstructionsPanel(context) {
       {}                     // Opzioni del webview
    );
 
-   // Crea una tabella HTML
-   const tableRows = Object.entries(instructionDocs).map(([name, { description, arguments, machineCode, flags }]) => {
-      return `<tr><td>${name}</td><td>${description}</td><td>${arguments}</td><td>${machineCode}</td><td>${flags}</td></tr>`;
-   }).join('');
+   // Definisci le categorie di istruzioni
+   const categories = {
+      'Gruppo trasferimento dati': ['LDWI', 'LDWA', 'LDWR', 'LDBI', 'LDBA', 'LDBR', 'STWA', 'STWR', 'STBA', 'STBR', 'MV', 'PUSH', 'POP', 'SPRD', 'SPWR'],
+      'Gruppo aritmetico-logiche': ['ADD', 'SUB', 'NOT', 'AND', 'OR', 'XOR', 'INC', 'DEC', 'LSH', 'RSH'],
+      'Gruppo I/O': ['INW', 'INB', 'OUTW', 'OUTB', 'TSTI', 'TSTO'],
+      'Gruppo di controllo del flusso': ['BR', 'JMP', 'JMPZ', 'JMPNZ', 'JMPN', 'JMPNN', 'JMPC', 'JMPV', 'CALL', 'RET', 'HLT']
+   };
 
+   // Genera le righe della tabella con le intestazioni di categoria
+   let tableRows = '';
+   for (const [category, instructions] of Object.entries(categories)) {
+      // Aggiungi l'intestazione della categoria
+      tableRows += `
+         <tr class="category-header">
+            <td colspan="5">${category}</td>
+         </tr>
+      `;
+      
+      // Aggiungi le righe per ogni istruzione nella categoria
+      for (const inst of instructions) {
+         const { description, arguments: args, machineCode, flags } = instructionDocs[inst];
+         tableRows += `
+            <tr>
+               <td>${inst}</td>
+               <td>${description}</td>
+               <td>${args}</td>
+               <td>${machineCode}</td>
+               <td>${flags}</td>
+            </tr>
+         `;
+      }
+   }
 
    panel.webview.html = `
     <!DOCTYPE html>
@@ -96,10 +123,23 @@ function openInstructionsPanel(context) {
           border-bottom: 1px solid #ddd;
         }
         th {
-          background-color:rgb(31, 138, 210);
+          background-color: rgb(31, 138, 210);
+          color: white;
         }
         tr:hover {
-          background-color:rgb(0, 0, 0);
+          background-color: rgba(200, 200, 200, 0.2);
+        }
+        .category-header {
+          background-color: rgb(100, 180, 230);
+          color: white;
+          font-weight: bold;
+          text-align: center;
+        }
+        .category-header td {
+          padding: 6px;
+        }
+        .category-header:hover {
+          background-color: rgb(80, 160, 210);
         }
       </style>
     </head>
@@ -122,6 +162,89 @@ function openInstructionsPanel(context) {
     </body>
     </html>
   `;
+}
+
+/**
+ * Fornisce i simboli del documento (etichette, sezioni) per l'Outline View
+ */
+class SimasmDocumentSymbolProvider {
+    provideDocumentSymbols(document, token) {
+        const symbols = [];
+        let currentSection = null;
+        
+        // Analizza il documento linea per linea
+        for (let i = 0; i < document.lineCount; i++) {
+            const line = document.lineAt(i);
+            const text = line.text.trim();
+            
+            // Ignora linee vuote
+            if (text === '') continue;
+            
+            // Rileva commenti di sezione (es. "; --- DATA SECTION ---")
+            const sectionMatch = text.match(/;\s*---\s*(.*?)\s*---/);
+            if (sectionMatch) {
+                const sectionName = sectionMatch[1];
+                const range = new vscode.Range(line.lineNumber, 0, line.lineNumber, line.text.length);
+                
+                currentSection = new vscode.DocumentSymbol(
+                    sectionName,
+                    'Sezione',
+                    vscode.SymbolKind.Module,
+                    range,
+                    range
+                );
+                symbols.push(currentSection);
+                continue;
+            }
+            
+            // Rileva etichette (es. "label:")
+            const labelMatch = text.match(/^([a-zA-Z_][a-zA-Z0-9_]*)\s*:/);
+            if (labelMatch) {
+                const labelName = labelMatch[1];
+                const range = new vscode.Range(line.lineNumber, 0, line.lineNumber, line.text.length);
+                
+                const labelSymbol = new vscode.DocumentSymbol(
+                    labelName,
+                    'Etichetta',
+                    vscode.SymbolKind.Function,
+                    range,
+                    range
+                );
+                
+                // Aggiungi l'etichetta alla sezione corrente o direttamente all'elenco principale
+                if (currentSection) {
+                    currentSection.children.push(labelSymbol);
+                } else {
+                    symbols.push(labelSymbol);
+                }
+                continue;
+            }
+            
+            // Rileva direttive per definizione dati (es. "word" o "byte")
+            const dataMatch = text.match(/^(word|byte)\s+/i);
+            if (dataMatch) {
+                const dataType = dataMatch[1];
+                const range = new vscode.Range(line.lineNumber, 0, line.lineNumber, line.text.length);
+                
+                const dataSymbol = new vscode.DocumentSymbol(
+                    `${dataType.toUpperCase()}`,
+                    'Dato',
+                    vscode.SymbolKind.Variable,
+                    range,
+                    range
+                );
+                
+                // Aggiungi la definizione dati alla sezione corrente o direttamente all'elenco principale
+                if (currentSection) {
+                    currentSection.children.push(dataSymbol);
+                } else {
+                    symbols.push(dataSymbol);
+                }
+            }
+        }
+        
+        return symbols;
+    }
 }
 
 function activate(context) {
@@ -289,6 +412,14 @@ function activate(context) {
    });
 
    context.subscriptions.push(definitionProvider);
+
+   // Registra il provider per l'Outline View
+   const documentSymbolProvider = vscode.languages.registerDocumentSymbolProvider(
+      'simasm',
+      new SimasmDocumentSymbolProvider()
+   );
+   
+   context.subscriptions.push(documentSymbolProvider);
 }
 
 function deactivate() { }
