@@ -739,8 +739,8 @@ function activate(context) {
             }
          </style>
          <script>
-            // Variabile globale per l'offset delle frecce
-            let arrowOffset = 40;
+            // Variabile globale per l'offset delle frecce - fissata a 25px
+            let arrowOffset = 25;
             
             // Funzione per navigare alla posizione nel codice
             document.addEventListener('DOMContentLoaded', () => {
@@ -761,43 +761,58 @@ function activate(context) {
                // Imposta tutte le box alla stessa larghezza
                equalizeBoxWidths();
                
-               // Imposta il valore dello slider all'offset corrente
-               document.getElementById('arrow-offset-slider').value = arrowOffset;
-               document.getElementById('offset-value').textContent = arrowOffset;
-               
-               // Aggiungi event listener per lo slider dell'offset
-               document.getElementById('arrow-offset-slider').addEventListener('input', function() {
-                  arrowOffset = parseInt(this.value);
-                  document.getElementById('offset-value').textContent = arrowOffset;
-                  
-                  // Pulisci e ridisegna le frecce con il nuovo offset
-                  const svgContainer = document.getElementById('svg-container');
-                  if (svgContainer) {
-                     svgContainer.innerHTML = '';
-                     setTimeout(drawArrows, 10);
-                  }
-               });
-               
                // Disegna le frecce di collegamento dopo che tutto è stato renderizzato
-               setTimeout(drawArrows, 300);
+               setTimeout(redrawArrows, 500);
                
                // Aggiungi listener per il ridimensionamento della finestra
-               let resizeTimer;
-               window.addEventListener('resize', () => {
-                  // Pulisci il timer esistente per implementare il debounce
-                  clearTimeout(resizeTimer);
-                  
-                  // Imposta un nuovo timer con un ritardo maggiore
-                  resizeTimer = setTimeout(() => {
-                     const svgContainer = document.getElementById('svg-container');
-                     if (svgContainer) {
-                        svgContainer.innerHTML = '';
-                        // Incrementa il timeout per dare alla finestra più tempo per ricalcolare i layout
-                        setTimeout(drawArrows, 300);
-                     }
-                  }, 250); // Attendi che il ridimensionamento sia completato
-               });
+               window.addEventListener('resize', debounce(redrawArrows, 250));
+               
+               // Controlla periodicamente se le frecce devono essere ridisegnate
+               setInterval(checkArrows, 2000);
             });
+
+            // Funzione di debounce per evitare troppe chiamate durante il ridimensionamento
+            function debounce(func, wait) {
+               let timeout;
+               return function() {
+                  const context = this;
+                  const args = arguments;
+                  clearTimeout(timeout);
+                  timeout = setTimeout(() => func.apply(context, args), wait);
+               };
+            }
+            
+            // Funzione per controllare se le frecce sono presenti e ridisegnarle se necessario
+            function checkArrows() {
+               const svg = document.querySelector('#svg-container svg');
+               const paths = svg ? svg.querySelectorAll('path') : [];
+               
+               if (paths.length === 0) {
+                  console.log('Frecce mancanti, ridisegno...');
+                  redrawArrows();
+               }
+            }
+            
+            // Funzione per ridisegnare completamente le frecce
+            function redrawArrows() {
+               console.log('Ridisegno frecce...');
+               // Pulisci completamente il container SVG esistente
+               const existingSvgContainer = document.getElementById('svg-container');
+               if (existingSvgContainer) {
+                  existingSvgContainer.parentNode.removeChild(existingSvgContainer);
+               }
+               
+               // Attendi che il DOM si stabilizzi dopo il ridimensionamento
+               setTimeout(() => {
+                  try {
+                     drawArrows();
+                  } catch (error) {
+                     console.error("Errore nel ridisegno delle frecce:", error);
+                     // Riprova dopo un timeout più lungo
+                     setTimeout(drawArrows, 500);
+                  }
+               }, 200);
+            }
             
             // Funzione per impostare una larghezza uniforme a tutte le box
             function equalizeBoxWidths() {
@@ -810,10 +825,12 @@ function activate(context) {
                      box.querySelector('.section-header').scrollWidth,
                      box.querySelector('.section-content').scrollWidth
                   );
-                  maxWidth = Math.max(maxWidth, contentWidth + 40);
+                  // Riduciamo i padding aggiuntivi da 40px a 10px
+                  maxWidth = Math.max(maxWidth, contentWidth + 10);
                });
                
-               maxWidth = Math.max(maxWidth, 350);
+               // Riduciamo la larghezza minima da 350px a 300px
+               maxWidth = Math.max(maxWidth, 300);
                
                boxes.forEach(box => {
                   box.style.width = maxWidth + 'px';
@@ -821,190 +838,194 @@ function activate(context) {
             }
             
             // Funzione per disegnare frecce tra i riferimenti e le etichette originali
-            function drawArrows() {
-                try {
-                    // Crea il container SVG se non esiste
-                    let svgContainer = document.getElementById('svg-container');
-                    if (!svgContainer) {
-                        svgContainer = document.createElement('div');
-                        svgContainer.id = 'svg-container';
-                        document.body.appendChild(svgContainer);
-                        
-                        // Crea l'elemento SVG
-                        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                        svg.setAttribute('width', '100%');
-                        svg.setAttribute('height', '100%');
-                        svg.style.position = 'absolute';
-                        svg.style.top = '0';
-                        svg.style.left = '0';
-                        svg.style.pointerEvents = 'none';
-                        svgContainer.appendChild(svg);
-                        
-                        // Aggiungi definizioni per le punte delle frecce
-                        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-                        svg.appendChild(defs);
-                        
-                        // Marker per frecce nella stessa box
-                        const markerSameBox = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-                        markerSameBox.setAttribute('id', 'arrowhead-same');
-                        markerSameBox.setAttribute('markerWidth', '10');
-                        markerSameBox.setAttribute('markerHeight', '7');
-                        markerSameBox.setAttribute('refX', '10');
-                        markerSameBox.setAttribute('refY', '3.5');
-                        markerSameBox.setAttribute('orient', 'auto');
-                        
-                        const polygonSame = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                        polygonSame.setAttribute('points', '0 0, 10 3.5, 0 7');
-                        polygonSame.setAttribute('class', 'arrow-head-same-box');
-                        markerSameBox.appendChild(polygonSame);
-                        defs.appendChild(markerSameBox);
-                        
-                        // Marker per frecce tra box diverse
-                        const markerDiffBox = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-                        markerDiffBox.setAttribute('id', 'arrowhead-diff');
-                        markerDiffBox.setAttribute('markerWidth', '10');
-                        markerDiffBox.setAttribute('markerHeight', '7');
-                        markerDiffBox.setAttribute('refX', '10');
-                        markerDiffBox.setAttribute('refY', '3.5');
-                        markerDiffBox.setAttribute('orient', 'auto');
-                        
-                        const polygonDiff = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-                        polygonDiff.setAttribute('points', '0 0, 10 3.5, 0 7');
-                        polygonDiff.setAttribute('class', 'arrow-head-diff-box');
-                        markerDiffBox.appendChild(polygonDiff);
-                        defs.appendChild(markerDiffBox);
-                    }
+function drawArrows() {
+    try {
+        // Crea il container SVG se non esiste
+        let svgContainer = document.getElementById('svg-container');
+        if (!svgContainer) {
+            svgContainer = document.createElement('div');
+            svgContainer.id = 'svg-container';
+            document.body.appendChild(svgContainer);
+            
+            // Crea l'elemento SVG
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            svg.style.position = 'absolute';
+            svg.style.top = '0';
+            svg.style.left = '0';
+            svg.style.pointerEvents = 'none';
+            svgContainer.appendChild(svg);
+            
+            // Aggiungi definizioni per le punte delle frecce
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            svg.appendChild(defs);
+            
+            // Marker per frecce nella stessa box
+            const markerSameBox = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+            markerSameBox.setAttribute('id', 'arrowhead-same');
+            markerSameBox.setAttribute('markerWidth', '10');
+            markerSameBox.setAttribute('markerHeight', '7');
+            markerSameBox.setAttribute('refX', '10');
+            markerSameBox.setAttribute('refY', '3.5');
+            markerSameBox.setAttribute('orient', 'auto');
+            
+            const polygonSame = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygonSame.setAttribute('points', '0 0, 10 3.5, 0 7');
+            polygonSame.setAttribute('class', 'arrow-head-same-box');
+            markerSameBox.appendChild(polygonSame);
+            defs.appendChild(markerSameBox);
+            
+            // Marker per frecce tra box diverse
+            const markerDiffBox = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+            markerDiffBox.setAttribute('id', 'arrowhead-diff');
+            markerDiffBox.setAttribute('markerWidth', '10');
+            markerDiffBox.setAttribute('markerHeight', '7');
+            markerDiffBox.setAttribute('refX', '10');
+            markerDiffBox.setAttribute('refY', '3.5');
+            markerDiffBox.setAttribute('orient', 'auto');
+            
+            const polygonDiff = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polygonDiff.setAttribute('points', '0 0, 10 3.5, 0 7');
+            polygonDiff.setAttribute('class', 'arrow-head-diff-box');
+            markerDiffBox.appendChild(polygonDiff);
+            defs.appendChild(markerDiffBox);
+        }
+
+        // Ottieni l'elemento SVG
+        const svg = svgContainer.querySelector('svg');
+        if (!svg) {
+            console.error("SVG non trovato, riprovo...");
+            setTimeout(drawArrows, 100);
+            return;
+        }
+        
+        // Ottieni tutti i riferimenti e le etichette
+        const labelRefs = document.querySelectorAll('.label-ref[data-label]');
+        
+        // Usa l'offset variabile definito dall'utente
+        const standardMargin = arrowOffset;
+        
+        // Definisci spazi tra le linee verticali e orizzontali
+        const horizontalGap = 5;  // Aumentato per maggiore distanza tra linee verticali
+        const verticalStep = 0;    // Aumentato per maggiore separazione tra linee orizzontali
+        
+        // Ottieni tutti i box
+        const boxes = document.querySelectorAll('.flowchart-box');
+        
+        // Raggruppa i riferimenti per destinazione
+        const referencesByTarget = new Map();
+        
+        // Prima, analizza tutti i riferimenti per etichetta
+        labelRefs.forEach(ref => {
+            const labelName = ref.getAttribute('data-label');
+            if (!referencesByTarget.has(labelName)) {
+                referencesByTarget.set(labelName, []);
+            }
+            referencesByTarget.get(labelName).push(ref);
+        });
+        
+        // Mappa per tenere traccia delle linee verticali globali
+        const verticalLinesMap = new Map();
+        let verticalLineIndex = 0;
+        
+        // Mappa da etichetta a box contenitore
+        const labelToBoxMap = new Map();
+        
+        // Associa ciascuna etichetta al suo box contenitore
+        document.querySelectorAll('.label[data-name]').forEach(label => {
+            const labelName = label.getAttribute('data-name');
+            const box = label.closest('.flowchart-box');
+            if (box) {
+                labelToBoxMap.set(labelName, box);
+            }
+        });
+        
+        // Preparazione: assegna ad ogni etichetta target una linea verticale unica
+        referencesByTarget.forEach((refs, labelName) => {
+            const target = document.querySelector('.label[data-name="' + labelName + '"]');
+            if (target) {
+                const targetBox = target.closest('.flowchart-box');
+                if (targetBox) {
+                    const rect = targetBox.getBoundingClientRect();
+                    const boxLeft = rect.left + window.pageXOffset;
                     
-                    // Ottieni l'elemento SVG
-                    const svg = svgContainer.querySelector('svg');
+                    // Calcola la posizione della linea verticale per questa etichetta
+                    // Stacchiamo le linee verticali tra loro con un gap incrementale
+                    const verticalLineX = Math.max(20, boxLeft - standardMargin - (verticalLineIndex * horizontalGap));
                     
-                    // Ottieni tutti i riferimenti e le etichette
-                    const labelRefs = document.querySelectorAll('.label-ref[data-label]');
-                    
-                    // Mappa per tenere traccia della posizione delle linee verticali per ciascun box
-                    const boxVerticalLines = new Map();
-                    
-                    // Definisci lo spazio orizzontale tra le linee verticali
-                    const horizontalGap = 8; // pixel tra le frecce
-                    // Usa l'offset variabile invece di un valore fisso
-                    const standardMargin = arrowOffset;
-                    
-                    // Ottieni tutti i box
-                    const boxes = document.querySelectorAll('.flowchart-box');
-                    
-                    // Raggruppa i riferimenti per destinazione
-                    const referencesByTarget = new Map();
-                    
-                    // Prima, analizza tutti i riferimenti per etichetta
-                    labelRefs.forEach(ref => {
-                        const labelName = ref.getAttribute('data-label');
-                        if (!referencesByTarget.has(labelName)) {
-                            referencesByTarget.set(labelName, []);
-                        }
-                        referencesByTarget.get(labelName).push(ref);
+                    verticalLinesMap.set(labelName, {
+                        x: verticalLineX,
+                        index: verticalLineIndex++,
+                        box: targetBox,
+                        refs: refs
                     });
-                    
-                    // Per ogni box, calcola la posizione delle linee verticali
-                    boxes.forEach(box => {
-                        const rect = box.getBoundingClientRect();
-                        const boxLeft = rect.left + window.pageXOffset;
-                        
-                        // Trova le etichette che appartengono a questo box
-                        const labelsInBox = Array.from(box.querySelectorAll('.label[data-name]'));
-                        const labelNames = labelsInBox.map(label => label.getAttribute('data-name'));
-                        
-                        // Conta quante linee verticali serviranno per questo box
-                        let verticalLineCount = 0;
-                        labelNames.forEach(name => {
-                            if (referencesByTarget.has(name)) {
-                                verticalLineCount++;
-                            }
-                        });
-                        
-                        // Calcola la posizione base della prima linea verticale per questo box
-                        // usando l'offset variabile definito dall'utente
-                        const baseVerticalLineX = Math.max(10, boxLeft - standardMargin);
-                        
-                        // Memorizza le posizioni delle linee verticali per questo box
-                        boxVerticalLines.set(box, {
-                            baseX: baseVerticalLineX,
-                            count: verticalLineCount
-                        });
-                    });
-                    
-                    // Disegna le frecce
-                    let groupIndex = 0;
-                    
-                    referencesByTarget.forEach((refs, labelName) => {
-                        // Trova l'etichetta target
-                        const target = document.querySelector('.label[data-name="' + labelName + '"]');
-                        
-                        if (target) {
-                            const targetBox = target.closest('.flowchart-box');
-                            const targetRect = target.getBoundingClientRect();
-                            const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-                            const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-                            
-                            // Punto finale (a sinistra dell'etichetta)
-                            const endX = targetRect.left + scrollX;
-                            const endY = targetRect.top + scrollY + targetRect.height / 2;
-                            
-                            // Ottieni le informazioni sulle linee verticali per questo box
-                            const verticalLineInfo = boxVerticalLines.get(targetBox);
-                            
-                            // Se non ci sono informazioni, salta
-                            if (!verticalLineInfo) return;
-                            
-                            // Calcola la posizione della linea verticale per questo gruppo di riferimenti
-                            // basata su quanti gruppi di frecce ci sono già per questo box
-                            const boxGroupIndex = Array.from(referencesByTarget.keys())
-                                .filter(name => document.querySelector('.label[data-name="' + name + '"]')?.closest('.flowchart-box') === targetBox)
-                                .indexOf(labelName);
-                            
-                            const verticalLineX = verticalLineInfo.baseX + (boxGroupIndex * horizontalGap);
-                            
-                            refs.forEach(ref => {
-                                // Ottieni le coordinate del riferimento
-                                const refRect = ref.getBoundingClientRect();
-                                const startX = refRect.left + scrollX;
-                                const startY = refRect.top + scrollY + refRect.height / 2;
-                                
-                                // Determina se sono nella stessa box
-                                const refBox = ref.closest('.flowchart-box');
-                                const sameBox = refBox === targetBox;
-                                
-                                // Crea il percorso della freccia
-                                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                                
-                                // Disegna la freccia
-                                const d = \`M \${startX},\${startY} 
-                                      H \${verticalLineX} 
-                                      V \${endY} 
-                                      H \${endX}\`;
-                                
-                                path.setAttribute('d', d);
-                                path.setAttribute('class', 'arrow-line ' + (sameBox ? 'arrow-same-box' : 'arrow-diff-box'));
-                                path.setAttribute('marker-end', 'url(#' + (sameBox ? 'arrowhead-same' : 'arrowhead-diff') + ')');
-                                
-                                svg.appendChild(path);
-                            });
-                        }
-                    });
-                } catch (error) {
-                    console.error("Error drawing arrows:", error);
-                    // Maybe add a retry mechanism
-                    setTimeout(drawArrows, 500);
                 }
             }
+        });
+        
+        // Disegna le frecce per ciascuna etichetta target
+        referencesByTarget.forEach((refs, labelName) => {
+            // Trova l'etichetta target
+            const target = document.querySelector('.label[data-name="' + labelName + '"]');
+            
+            if (target && verticalLinesMap.has(labelName)) {
+                const targetBox = target.closest('.flowchart-box');
+                const targetRect = target.getBoundingClientRect();
+                const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+                const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // Punto finale (a sinistra dell'etichetta)
+                const endX = targetRect.left + scrollX - 10; // Spostato 10px a sinistra
+                const endY = targetRect.top + scrollY + targetRect.height / 2;
+                
+                // Ottieni la posizione della linea verticale
+                const verticalLineX = verticalLinesMap.get(labelName).x;
+                
+                // Disegna frecce per ogni riferimento a questa etichetta
+                refs.forEach((ref, refIndex) => {
+                    // Ottieni le coordinate del riferimento
+                    const refRect = ref.getBoundingClientRect();
+                    const startX = refRect.left + scrollX - 10; // Spostato 10px a sinistra
+                    const startY = refRect.top + scrollY + refRect.height / 2;
+                    
+                    // Determina se sono nella stessa box
+                    const refBox = ref.closest('.flowchart-box');
+                    const sameBox = refBox === targetBox;
+                    
+                    // Calcola offset verticale incrementale per ogni riferimento
+                    // Usiamo un offset più grande per separare chiaramente le linee
+                    const verticalOffset = refIndex * verticalStep;
+                    
+                    // Crea il percorso della freccia
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    
+                    // Disegna la freccia con percorso migliorato
+                    const d = \`M \${startX},\${startY} 
+                               H \${verticalLineX} 
+                               V \${endY - verticalOffset} 
+                               H \${endX}\`;
+                    
+                    path.setAttribute('d', d);
+                    path.setAttribute('class', 'arrow-line ' + (sameBox ? 'arrow-same-box' : 'arrow-diff-box'));
+                    path.setAttribute('marker-end', 'url(#' + (sameBox ? 'arrowhead-same' : 'arrowhead-diff') + ')');
+                    
+                    svg.appendChild(path);
+                });
+            }
+        });
+
+        console.log("Frecce disegnate con successo");
+    } catch (error) {
+        console.error("Errore nel disegno delle frecce:", error);
+        // Riprova tra mezzo secondo
+        setTimeout(drawArrows, 500);
+    }
+}
          </script>
       </head>
       <body>
          <h1>SIMASM Flow Chart</h1>
-         <div class="controls-container">
-            <span class="control-label">Offset frecce:</span>
-            <input type="range" id="arrow-offset-slider" min="10" max="150" step="5">
-            <span id="offset-value" class="offset-value">40</span>px
-         </div>
          <div class="flowchart-container">
             ${boxesHtml}
          </div>
