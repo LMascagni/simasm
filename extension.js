@@ -553,21 +553,18 @@ function activate(context) {
    function generateFlowChartHtml(sections) {
       let boxesHtml = '';
       
-      // Genera HTML per ogni sezione con connettori
+      // Genera HTML per ogni sezione senza connettori
       sections.forEach((section, index) => {
-         // Aggiungi connettore (freccia) se non è la prima sezione
-         if (index > 0) {
-            boxesHtml += `
-               <div class="connector"></div>
-               <div class="arrow-down"></div>
-            `;
-         }
+         // Rimosso il connettore (freccia)
+         // if (index > 0) {
+         //    boxesHtml += `
+         //       <div class="connector"></div>
+         //       <div class="arrow-down"></div>
+         //    `;
+         // }
          
-         // Formatta il contenuto del codice per la visualizzazione HTML
-         const formattedCode = section.content
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
+         // Formatta il contenuto del codice per la visualizzazione HTML con evidenziazione della sintassi
+         const formattedCode = highlightSyntax(section.content);
          
          boxesHtml += `
             <div class="flowchart-box" id="section-${index}" data-line="${section.line}">
@@ -608,7 +605,7 @@ function activate(context) {
                   flex-direction: column;
                   cursor: pointer;
                   transition: transform 0.2s;
-                  margin-bottom: 10px;
+                  margin-bottom: 20px; /* Aumentato lo spazio tra i box */
                   /* Non impostiamo la larghezza qui, la gestiremo con JS */
                }
                .flowchart-box:hover {
@@ -634,8 +631,9 @@ function activate(context) {
                pre {
                   margin: 0;
                   white-space: pre-wrap;
-                  color: #000000; /* Testo nero per il codice */
                }
+               /* Gli stili dei connettori sono stati mantenuti ma commentati per uso futuro */
+               /* 
                .connector {
                   width: 2px;
                   height: 30px;
@@ -650,9 +648,40 @@ function activate(context) {
                   border-top: 10px solid #336699;
                   margin-bottom: 5px;
                }
+               */
                h1 {
                   color: #336699;
                   text-align: center;
+               }
+               
+               /* Stili per evidenziazione sintassi - rimasti invariati */
+               .instruction {
+                  color: #FF5733; /* Arancione */
+                  font-weight: bold;
+               }
+               .label {
+                  color: #008000; /* Verde */
+                  font-style: italic;
+               }
+               .register {
+                  color: #1E90FF; /* Blu */
+                  font-weight: bold;
+               }
+               .numeric {
+                  color: #FFD700; /* Giallo */
+                  font-style: italic;
+               }
+               .comment {
+                  color: #888888; /* Grigio */
+                  font-style: italic;
+               }
+               .label-ref {
+                  color: #FFA500; /* Arancione */
+                  text-decoration: underline;
+               }
+               .data-type {
+                  color: #FFB86C; /* Arancione chiaro */
+                  font-weight: bold;
                }
             </style>
             <script>
@@ -718,7 +747,198 @@ function activate(context) {
       `;
    }
 
-   // Comando per visualizzare il flow chart
+   // Funzione per evidenziare la sintassi SIMASM
+   function highlightSyntax(code) {
+      // Escape dei caratteri HTML per evitare XSS
+      code = code
+         .replace(/&/g, '&amp;')
+         .replace(/</g, '&lt;')
+         .replace(/>/g, '&gt;');
+
+      // Dividi il codice in righe per elaborarle separatamente
+      const lines = code.split('\n');
+      
+      // Compila i pattern in espressioni regolari una sola volta
+      const instructionRegex = /\b(LDWI|LDWA|LDWR|LDBI|LDBA|LDBR|STWA|STWR|STBA|STBR|MV|PUSH|POP|SPRD|SPWR|ADD|SUB|NOT|AND|OR|XOR|INC|DEC|LSH|RSH|INW|INB|OUTW|OUTB|TSTI|TSTO|BR|JMP|JMPZ|JMPNZ|JMPN|JMPNN|JMPC|JMPV|CALL|RET|HLT)\b/i;
+      const dataTypeRegex = /\b(word|byte)\b/i;
+      const registerRegex = /\b[Rr][0-9]+\b/g;
+      const numericRegex = /\b0x[0-9A-Fa-f]+\b|\b[0-9]+[0-9A-Fa-f]*\b/g; // Migliorata per riconoscere anche esadecimali senza prefisso
+      const labelDefRegex = /\b[a-zA-Z_][a-zA-Z0-9_]*\s*:/;
+      
+      const jumpInstructions = ['BR', 'JMP', 'JMPZ', 'JMPNZ', 'JMPN', 'JMPNN', 'JMPC', 'JMPV', 'CALL'];
+      const otherInstructions = ['LDWI', 'LDWA', 'LDWR', 'LDBI', 'LDBA', 'LDBR', 'STWA', 'STWR', 'STBA', 'STBR', 
+                               'MV', 'PUSH', 'POP', 'SPRD', 'SPWR', 'ADD', 'SUB', 'NOT', 'AND', 'OR', 'XOR', 
+                               'INC', 'DEC', 'LSH', 'RSH', 'INW', 'INB', 'OUTW', 'OUTB', 'TSTI', 'TSTO'];
+      
+      // Elabora ogni riga
+      const processedLines = lines.map(line => {
+         // Gestione commenti - si assicura che i commenti siano rilevati correttamente
+         const commentIndex = line.indexOf(';');
+         if (commentIndex === 0) {
+            // Riga è interamente un commento
+            return `<span class="comment">${line}</span>`;
+         } else if (commentIndex > 0) {
+            // La riga contiene sia codice che un commento
+            const codePart = line.substring(0, commentIndex);
+            const commentPart = line.substring(commentIndex);
+            
+            // Procedi con l'evidenziazione del codice
+            let highlightedCode = processCodePart(codePart);
+            
+            // Restituisci il codice evidenziato seguito dal commento
+            return highlightedCode + `<span class="comment">${commentPart}</span>`;
+         } else {
+            // La riga non contiene commenti
+            return processCodePart(line);
+         }
+      });
+      
+      // Funzione interna per elaborare la parte di codice (no commenti)
+      function processCodePart(codePart) {
+         // Approccio più robusto: tokenizza il codice prima di evidenziarlo
+         const tokens = [];
+         let current = '';
+         let inWord = false;
+         
+         // 1. Dividi in token (parole e non-parole)
+         for (let i = 0; i < codePart.length; i++) {
+            const char = codePart[i];
+            const isWordChar = /[a-zA-Z0-9_]/.test(char);
+            
+            // Gestione speciale per il carattere ":" nelle etichette
+            if (char === ':' && i > 0 && /[a-zA-Z0-9_]/.test(codePart[i-1])) {
+               // Questo è probabilmente il carattere : di un'etichetta
+               // Assicuriamoci di includerlo con la parola precedente
+               if (inWord) {
+                  current += char;
+                  tokens.push({ type: 'label', text: current });
+                  current = '';
+                  inWord = false;
+                  continue;
+               }
+            }
+            
+            if (isWordChar) {
+               if (!inWord) {
+                  if (current) tokens.push({ type: 'space', text: current });
+                  current = '';
+                  inWord = true;
+               }
+               current += char;
+            } else {
+               if (inWord) {
+                  tokens.push({ type: 'word', text: current });
+                  current = '';
+                  inWord = false;
+               }
+               current += char;
+            }
+         }
+         
+         // Aggiungi l'ultimo token
+         if (current) {
+            tokens.push({ type: inWord ? 'word' : 'space', text: current });
+         }
+         
+         // 2. Identifica token speciali
+         let result = '';
+         let lastWasJumpInstruction = false;
+         
+         for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
+            
+            if (token.type === 'space') {
+               result += token.text;
+               continue;
+            }
+            
+            if (token.type === 'label') {
+               // Gestisci direttamente i token di tipo 'label'
+               result += `<span class="label">${token.text}</span>`;
+               continue;
+            }
+            
+            const text = token.text;
+            
+            // Controlla se questo token è un'etichetta seguito da un carattere ":"
+            if (i < tokens.length - 1 && 
+                token.type === 'word' && 
+                tokens[i+1].type === 'space' && 
+                tokens[i+1].text.startsWith(':')) {
+               
+               // È un'etichetta seguita da ":" (caso in cui ":" non sia stato combinato nella tokenizzazione)
+               result += `<span class="label">${text}${tokens[i+1].text.charAt(0)}</span>`;
+               // Modifica il token successivo per rimuovere il carattere ":"
+               tokens[i+1] = { 
+                  type: 'space', 
+                  text: tokens[i+1].text.substring(1) 
+               };
+               continue;
+            }
+            
+            // Etichetta definizione (caso in cui l'etichetta contenga già il ":")
+            if (text.match(labelDefRegex)) {
+               result += `<span class="label">${text}</span>`;
+               continue;
+            }
+            
+            // Istruzione di salto
+            if (jumpInstructions.includes(text.toUpperCase())) {
+               result += `<span class="instruction">${text}</span>`;
+               lastWasJumpInstruction = true;
+               continue;
+            }
+            
+            // Etichetta riferimento (dopo istruzione di salto)
+            if (lastWasJumpInstruction && text.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+               result += `<span class="label-ref">${text}</span>`;
+               lastWasJumpInstruction = false;
+               continue;
+            }
+            
+            // Altre istruzioni
+            if (otherInstructions.includes(text.toUpperCase()) || 
+                text.toUpperCase() === "RET" || text.toUpperCase() === "HLT") {
+               result += `<span class="instruction">${text}</span>`;
+               continue;
+            }
+            
+            // Tipo di dati
+            if (text.match(/^(word|byte)$/i)) {
+               result += `<span class="data-type">${text}</span>`;
+               continue;
+            }
+            
+            // Registro
+            if (text.match(/^[Rr][0-9]+$/)) {
+               result += `<span class="register">${text}</span>`;
+               continue;
+            }
+            
+            // Valore numerico (migliorato per riconoscere qualsiasi esadecimale)
+            if (text.match(/^(0x[0-9A-Fa-f]+|[0-9A-Fa-f]+)$/)) {
+               result += `<span class="numeric">${text}</span>`;
+               continue;
+            }
+            
+            // Altro potenziale riferimento a etichetta
+            if (text.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+               result += `<span class="label-ref">${text}</span>`;
+               continue;
+            }
+            
+            // Default: testo normale
+            result += text;
+         }
+         
+         return result;
+      }
+      
+      // Unisci le righe elaborate
+      return processedLines.join('\n');
+   }
+
+   // Registra il comando per visualizzare il flow chart
    context.subscriptions.push(
       vscode.commands.registerCommand('extension.showFlowChart', () => {
          showFlowChart();
