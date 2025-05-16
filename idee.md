@@ -10,9 +10,3 @@ Caratteristiche:
 - Inserimento di CALL nel punto originale
 - Aggiunta di RET alla fine della subroutine estratta
 - Posizionamento intelligente della nuova subroutine nel codice
-
-
-
-##per il generatore di diagrammi
-
-- **Clic su una sezione**: salta alla posizione corrispondente nel codice
