@@ -10,3 +10,6 @@ Caratteristiche:
 - Inserimento di CALL nel punto originale
 - Aggiunta di RET alla fine della subroutine estratta
 - Posizionamento intelligente della nuova subroutine nel codice
+
+
+"Find all references" command for labels
