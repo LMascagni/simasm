@@ -226,6 +226,7 @@ Il flow chart verrà aperto in un pannello separato, mostrando:
 
 - **Visualizzazione automatica dei salti**: vedi dove puntano le tue istruzioni di salto
 - **Aggiornamento automatico**: il flow chart si aggiorna quando salvi il file
+- **Rimando al codice**: Facendo clic su un sezione del diagramma di flusso, il cursore si sposta alla sezione corrispondente del codice.
 
 Questa visualizzazione è particolarmente utile per:
 - Capire programmi complessi

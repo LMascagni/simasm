@@ -432,7 +432,10 @@ function activate(context) {
          return;
       }
 
+      // Memorizza una reference all'editor originale
+      const originalEditor = editor;
       const document = editor.document;
+      
       // Riutilizza il pannello esistente o creane uno nuovo
       if (flowchartPanel) {
          flowchartPanel.reveal(vscode.ViewColumn.Two);
@@ -446,6 +449,43 @@ function activate(context) {
                enableScripts: true,
                retainContextWhenHidden: true
             }
+         );
+
+         // Configura la gestione dei messaggi (solo una volta quando il pannello viene creato)
+         flowchartPanel.webview.onDidReceiveMessage(
+            message => {
+               console.log("Ricevuto messaggio:", message);
+               
+               if (message.command === 'jumpToLine') {
+                  // Usa la reference all'editor originale invece di cercare l'editor attivo
+                  if (originalEditor) {
+                     console.log("Editor originale trovato, vado alla linea:", message.line);
+                     
+                     try {
+                        // Crea una posizione all'inizio della riga specificata
+                        const position = new vscode.Position(message.line, 0);
+                        
+                        // Imposta la selezione alla posizione specificata
+                        originalEditor.selection = new vscode.Selection(position, position);
+                        
+                        // Porta quella parte di codice in vista
+                        originalEditor.revealRange(
+                           new vscode.Range(position, position),
+                           vscode.TextEditorRevealType.InCenter
+                        );
+                        
+                        // Forza l'attivazione dell'editor originale
+                        vscode.window.showTextDocument(originalEditor.document, originalEditor.viewColumn, false);
+                     } catch (error) {
+                        console.error("Errore durante il salto alla linea:", error);
+                     }
+                  } else {
+                     console.log("Editor originale non disponibile");
+                  }
+               }
+            },
+            undefined,
+            context.subscriptions
          );
 
          // Gestisci evento di chiusura del pannello
@@ -463,6 +503,9 @@ function activate(context) {
 
       const text = document.getText();
       const lines = text.split('\n');
+
+      // Get the file name from the document
+      const fileName = document.fileName.split('\\').pop();
 
       // Trova tutte le sezioni
       const sections = [];
@@ -511,7 +554,7 @@ function activate(context) {
             <html lang="it">
             <head>
                <meta charset="UTF-8">
-               <title>SIMASM Flow Chart</title>
+               <title>${fileName} diagram</title>
                <style>
                   body { 
                      font-family: Arial, sans-serif; 
@@ -521,36 +564,19 @@ function activate(context) {
                </style>
             </head>
             <body>
-               <h1>Nessuna sezione trovata</h1>
-               <p>Aggiorna commenti con formato "; --- NOME SEZIONE ---" per visualizzare il flow chart.</p>
+               <h1>${fileName} diagram</h1>
+               <p>Update comments using the format '; --- SECTION NAME ---' to display the flow chart.</p>
             </body>
             </html>
          `;
          return;
       }
 
-      // Genera HTML per il flowchart
-      flowchartPanel.webview.html = generateFlowChartHtml(sections);
-
-      // Configura la gestione dei messaggi
-      flowchartPanel.webview.onDidReceiveMessage(
-         message => {
-            if (message.command === 'jumpToLine') {
-               const editor = vscode.window.activeTextEditor;
-               if (editor) {
-                  const position = new vscode.Position(message.line, 0);
-                  editor.selection = new vscode.Selection(position, position);
-                  editor.revealRange(
-                     new vscode.Range(position, position),
-                     vscode.TextEditorRevealType.InCenter
-                  );
-               }
-            }
-         }
-      );
+      // Genera HTML per il flowchart includendo il nome del file
+      flowchartPanel.webview.html = generateFlowChartHtml(sections, fileName);
    }
 
-   function generateFlowChartHtml(sections) {
+   function generateFlowChartHtml(sections, fileName) {
       let boxesHtml = '';
 
       // Mappa per tenere traccia di tutte le etichette definite
@@ -593,7 +619,7 @@ function activate(context) {
       <head>
          <meta charset="UTF-8">
          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-         <title>SIMASM Flow Chart</title>
+         <title>${fileName} diagram</title>
          <style>
             body {
                font-family: Arial, sans-serif;
@@ -739,18 +765,29 @@ function activate(context) {
             }
          </style>
          <script>
+            // Inizializza vscode API all'inizio
+            const vscode = acquireVsCodeApi();
+            console.log("VS Code API inizializzata");
+            
             // Variabile globale per l'offset delle frecce - fissata a 25px
             let arrowOffset = 25;
             
             // Funzione per navigare alla posizione nel codice
             document.addEventListener('DOMContentLoaded', () => {
-               const vscode = acquireVsCodeApi();
+               console.log("DOM caricato, configurazione eventi...");
                const boxes = document.querySelectorAll('.flowchart-box');
+               console.log("Box trovati:", boxes.length);
                
                // Gestisci i click sulle box
                boxes.forEach(box => {
+                  const lineNum = box.getAttribute('data-line');
+                  console.log("Box configurato per linea:", lineNum);
+                  
                   box.addEventListener('click', () => {
                      const line = box.getAttribute('data-line');
+                     console.log("Click su box, invio messaggio per linea:", line);
+                     
+                     // Invia il messaggio all'estensione
                      vscode.postMessage({
                         command: 'jumpToLine',
                         line: parseInt(line)
@@ -770,7 +807,7 @@ function activate(context) {
                // Controlla periodicamente se le frecce devono essere ridisegnate
                setInterval(checkArrows, 2000);
             });
-
+            
             // Funzione di debounce per evitare troppe chiamate durante il ridimensionamento
             function debounce(func, wait) {
                let timeout;
@@ -1048,7 +1085,7 @@ function drawArrows() {
          </script>
       </head>
       <body>
-         <h1>SIMASM Flow Chart</h1>
+         <h1>${fileName} diagram</h1>
          <div class="flowchart-container">
             ${boxesHtml}
          </div>
