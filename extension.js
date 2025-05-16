@@ -1,5 +1,8 @@
 const vscode = require('vscode');
 
+// Riferimento globale al pannello flowchart
+let flowchartPanel = null;
+
 let formattingStyle = 'full';
 
 // Dizionario istruzioni SIMASM con descrizioni in italiano
@@ -290,7 +293,7 @@ function activate(context) {
 
          const labelWidth = Math.max(...lines.map(l => l.label.length));
          const instWidth = Math.max(...lines.map(l => l.inst.length));
-         const op1Width = Math.max(...lines.map(l => l.op1.length));
+         const op1Width = Math.max(...lines.map (l => l.op1.length));
          const op2Width = Math.max(...lines.map(l => l.op2.length));
 
          const codeWidths = lines.map(({ label, inst, op1, op2 }) => {
@@ -420,6 +423,318 @@ function activate(context) {
    );
    
    context.subscriptions.push(documentSymbolProvider);
+
+   // Funzione per visualizzare il flow chart del codice
+   function showFlowChart() {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor || editor.document.languageId !== 'simasm') {
+         vscode.window.showInformationMessage('Apri un file SIMASM prima di visualizzare il flow chart');
+         return;
+      }
+
+      const document = editor.document;
+      // Riutilizza il pannello esistente o creane uno nuovo
+      if (flowchartPanel) {
+         flowchartPanel.reveal(vscode.ViewColumn.Two);
+      } else {
+         // Crea un WebView per visualizzare il flowchart
+         flowchartPanel = vscode.window.createWebviewPanel(
+            'simasm.flowchart',
+            'SIMASM Flow Chart',
+            vscode.ViewColumn.Two,
+            {
+               enableScripts: true,
+               retainContextWhenHidden: true
+            }
+         );
+
+         // Gestisci evento di chiusura del pannello
+         flowchartPanel.onDidDispose(() => {
+            flowchartPanel = null;
+         }, null, context.subscriptions);
+      }
+      
+      // Aggiorna il flow chart con i dati attuali
+      updateFlowChart(document);
+   }
+
+   function updateFlowChart(document) {
+      if (!flowchartPanel) return;
+
+      const text = document.getText();
+      const lines = text.split('\n');
+      
+      // Trova tutte le sezioni
+      const sections = [];
+      let currentSection = null;
+      
+      // Prima passa: identifica tutte le sezioni
+      for (let i = 0; i < lines.length; i++) {
+         const line = lines[i];
+         const sectionMatch = line.match(/;\s*---\s*(.*?)\s*---/);
+         
+         if (sectionMatch) {
+            const sectionName = sectionMatch[1];
+            
+            // Chiudi la sezione precedente
+            if (currentSection) {
+               currentSection.endLine = i - 1;
+            }
+            
+            // Crea una nuova sezione
+            currentSection = {
+               name: sectionName,
+               line: i,
+               startLine: i + 1, // Inizia dalla riga dopo il commento
+               endLine: lines.length - 1, // Temporaneamente fino alla fine del file
+               content: ""
+            };
+            
+            sections.push(currentSection);
+         }
+      }
+      
+      // Seconda passa: estrai il contenuto di ogni sezione
+      for (let i = 0; i < sections.length; i++) {
+         const section = sections[i];
+         // Imposta l'endLine corretto basato sulla prossima sezione
+         if (i < sections.length - 1) {
+            section.endLine = sections[i + 1].line - 1;
+         }
+         const sectionLines = lines.slice(section.startLine, section.endLine + 1);
+         section.content = sectionLines.join('\n');
+      }
+      
+      if (sections.length === 0) {
+         flowchartPanel.webview.html = `
+            <!DOCTYPE html>
+            <html lang="it">
+            <head>
+               <meta charset="UTF-8">
+               <title>SIMASM Flow Chart</title>
+               <style>
+                  body { 
+                     font-family: Arial, sans-serif; 
+                     padding: 20px;
+                     text-align: center;
+                  }
+               </style>
+            </head>
+            <body>
+               <h1>Nessuna sezione trovata</h1>
+               <p>Aggiorna commenti con formato "; --- NOME SEZIONE ---" per visualizzare il flow chart.</p>
+            </body>
+            </html>
+         `;
+         return;
+      }
+      
+      // Genera HTML per il flowchart
+      flowchartPanel.webview.html = generateFlowChartHtml(sections);
+
+      // Configura la gestione dei messaggi
+      flowchartPanel.webview.onDidReceiveMessage(
+         message => {
+            if (message.command === 'jumpToLine') {
+               const editor = vscode.window.activeTextEditor;
+               if (editor) {
+                  const position = new vscode.Position(message.line, 0);
+                  editor.selection = new vscode.Selection(position, position);
+                  editor.revealRange(
+                     new vscode.Range(position, position),
+                     vscode.TextEditorRevealType.InCenter
+                  );
+               }
+            }
+         }
+      );
+   }
+
+   function generateFlowChartHtml(sections) {
+      let boxesHtml = '';
+      
+      // Genera HTML per ogni sezione con connettori
+      sections.forEach((section, index) => {
+         // Aggiungi connettore (freccia) se non è la prima sezione
+         if (index > 0) {
+            boxesHtml += `
+               <div class="connector"></div>
+               <div class="arrow-down"></div>
+            `;
+         }
+         
+         // Formatta il contenuto del codice per la visualizzazione HTML
+         const formattedCode = section.content
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+         
+         boxesHtml += `
+            <div class="flowchart-box" id="section-${index}" data-line="${section.line}">
+               <div class="section-header">${section.name}</div>
+               <div class="section-content">
+                  <pre>${formattedCode}</pre>
+               </div>
+            </div>
+         `;
+      });
+      
+      return `
+         <!DOCTYPE html>
+         <html lang="it">
+         <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>SIMASM Flow Chart</title>
+            <style>
+               body {
+                  font-family: Arial, sans-serif;
+                  padding: 20px;
+                  background-color: #f5f5f5;
+               }
+               .flowchart-container {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  margin-top: 20px;
+               }
+               .flowchart-box {
+                  border: 2px solid #336699;
+                  border-radius: 8px;
+                  min-height: 60px;
+                  background-color: #f0f8ff;
+                  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                  display: flex;
+                  flex-direction: column;
+                  cursor: pointer;
+                  transition: transform 0.2s;
+                  margin-bottom: 10px;
+                  /* Non impostiamo la larghezza qui, la gestiremo con JS */
+               }
+               .flowchart-box:hover {
+                  transform: scale(1.05);
+                  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+               }
+               .section-header {
+                  background-color: #336699;
+                  color: white;
+                  padding: 8px;
+                  border-top-left-radius: 6px;
+                  border-top-right-radius: 6px;
+                  font-weight: bold;
+                  text-align: center;
+               }
+               .section-content {
+                  padding: 10px;
+                  font-family: 'Courier New', monospace;
+                  font-size: 12px;
+                  overflow: auto;
+                  /* Nessun max-height per permettere una lunghezza dinamica */
+               }
+               pre {
+                  margin: 0;
+                  white-space: pre-wrap;
+                  color: #000000; /* Testo nero per il codice */
+               }
+               .connector {
+                  width: 2px;
+                  height: 30px;
+                  background-color: #336699;
+                  margin: 5px 0;
+               }
+               .arrow-down {
+                  width: 0; 
+                  height: 0; 
+                  border-left: 10px solid transparent;
+                  border-right: 10px solid transparent;
+                  border-top: 10px solid #336699;
+                  margin-bottom: 5px;
+               }
+               h1 {
+                  color: #336699;
+                  text-align: center;
+               }
+            </style>
+            <script>
+               // Funzione per navigare alla posizione nel codice quando si clicca su una sezione
+               document.addEventListener('DOMContentLoaded', () => {
+                  const boxes = document.querySelectorAll('.flowchart-box');
+                  
+                  // Gestisci i click sulle box
+                  boxes.forEach(box => {
+                     box.addEventListener('click', () => {
+                        const line = box.getAttribute('data-line');
+                        // Comunica con l'estensione VS Code
+                        vscode.postMessage({
+                           command: 'jumpToLine',
+                           line: parseInt(line)
+                        });
+                     });
+                  });
+                  
+                  // Imposta tutte le box alla stessa larghezza (la maggiore)
+                  equalizeBoxWidths();
+               });
+               
+               // Funzione per impostare una larghezza uniforme a tutte le box
+               function equalizeBoxWidths() {
+                  const boxes = document.querySelectorAll('.flowchart-box');
+                  let maxWidth = 0;
+                  
+                  // Prima passiamo e misuriamo la larghezza necessaria per ogni box
+                  boxes.forEach(box => {
+                     // Rimuoviamo temporaneamente la larghezza per misurare il content
+                     box.style.width = 'auto';
+                     // Troviamo la larghezza di cui ha bisogno il contenuto
+                     const contentWidth = Math.max(
+                        box.querySelector('.section-header').scrollWidth,
+                        box.querySelector('.section-content').scrollWidth
+                     );
+                     // Aggiorniamo la massima larghezza
+                     maxWidth = Math.max(maxWidth, contentWidth + 40); // 40px per padding e bordi
+                  });
+                  
+                  // Poi impostiamo tutte le box alla stessa larghezza massima
+                  boxes.forEach(box => {
+                     box.style.width = maxWidth + 'px';
+                  });
+                  
+                  // Imposta la larghezza minima (per non avere box troppo strette)
+                  maxWidth = Math.max(maxWidth, 350);
+                  
+                  boxes.forEach(box => {
+                     box.style.width = maxWidth + 'px';
+                  });
+               }
+            </script>
+         </head>
+         <body>
+            <h1>SIMASM Flow Chart</h1>
+            <div class="flowchart-container">
+               ${boxesHtml}
+            </div>
+         </body>
+         </html>
+      `;
+   }
+
+   // Comando per visualizzare il flow chart
+   context.subscriptions.push(
+      vscode.commands.registerCommand('extension.showFlowChart', () => {
+         showFlowChart();
+      })
+   );
+
+   // Aggiungi listener per l'evento di salvataggio del documento
+   context.subscriptions.push(
+      vscode.workspace.onDidSaveTextDocument(document => {
+         // Verifica che sia un documento SIMASM
+         if (document.languageId === 'simasm' && flowchartPanel) {
+            // Aggiorna il flow chart
+            updateFlowChart(document);
+         }
+      })
+   );
 }
 
 function deactivate() { }

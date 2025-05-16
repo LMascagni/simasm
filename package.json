@@ -61,6 +61,10 @@
       {
         "command": "extension.showInstructions",
         "title": "Show SIMASM Instructions"
+      },
+      {
+        "command": "extension.showFlowChart",
+        "title": "SIMASM: Show Flow Chart"
       }
     ],
     "configuration": {
