@@ -1,3 +1,4 @@
+
 # SIMASM – Estensione per il linguaggio Assembly di SIMCPU
 
 Estensione per Visual Studio Code che fornisce **supporto completo al linguaggio SIMASM**, utilizzato nel simulatore SIMCPU dell'Università di Udine.
@@ -11,6 +12,8 @@ Questa estensione è pensata per studenti e docenti, e rende più chiara e produ
 ✅ **Tema scuro personalizzato: "SIMCPU Syntax"**  
 ✅ **Navigazione alle definizioni di etichette**  
 ✅ **Pannello di riferimento istruzioni**  
+✅ **Visualizzazione Flow Chart interattivo**  
+✅ **Outline View gerarchico con sezioni**
 
 ---
 
@@ -29,12 +32,13 @@ Questa estensione è pensata per studenti e docenti, e rende più chiara e produ
 
 ### 📊 Navigazione
 - **Vai alla definizione**: naviga rapidamente alle etichette (F12 o Ctrl+Click)
-- **Evidenziazione delle parentesi**: facilita la lettura di espressioni complesse
+- **Flow Chart interattivo**: visualizza il flusso del programma con navigazione integrata
 
 ### ⚡ Produttività
 - **Formattazione automatica**: allineamento e indentazione del codice con "Format Document" (Shift+Alt+F)
 - **Due modalità di formattazione**: FULL e COMPACT
 - **Commenti**: supporto per commenti in linea con `;` e commenti speciali con `;;`
+- **Organizzazione del codice**: sezioni e sottosezioni per progetti complessi
 
 ---
 
@@ -162,6 +166,7 @@ La visualizzazione strutturale del documento organizza il codice in una gerarchi
 - Visualizza etichette, sezioni e dati in una struttura ad albero
 - Permette di navigare rapidamente in file di grandi dimensioni
 - Organizza automaticamente le etichette sotto le rispettive sezioni
+- Supporto per dati `word` e `byte` nell'Outline View
 
 #### Come usare le sezioni
 Per creare sezioni logiche nel codice, usa commenti con questo formato:
@@ -194,6 +199,44 @@ Nell'Outline View questo viene visualizzato come:
 ```
 
 Questa funzionalità è particolarmente utile per programmi complessi o didattici dove è importante avere una struttura chiara e facilmente navigabile.
+
+### 📊 Visualizzazione Flow Chart
+
+Una delle funzionalità più potenti di questa estensione è la visualizzazione interattiva del flow chart del tuo codice SIMASM, che ti permette di:
+
+- **Visualizzare la struttura** del programma in modo grafico
+- **Navigare facilmente** tra le diverse sezioni del codice
+- **Seguire i salti e i riferimenti** tra etichette con frecce interattive
+- **Capire il flusso del programma** in modo visivo
+
+#### Come usare il Flow Chart
+
+1. Organizza il tuo codice in sezioni usando il formato `; --- NOME SEZIONE ---`
+2. Apri la Command Palette (Ctrl+Shift+P)
+3. Cerca e seleziona il comando `SIMASM: Show Flow Chart`
+
+Il flow chart verrà aperto in un pannello separato, mostrando:
+
+- Sezioni come blocchi colorati
+- Codice con sintassi evidenziata in ogni blocco
+- Frecce che collegano i riferimenti alle etichette
+- Colori diversi per frecce tra sezioni diverse e all'interno della stessa sezione
+
+#### Interazione con il Flow Chart
+
+- **Visualizzazione automatica dei salti**: vedi dove puntano le tue istruzioni di salto
+- **Aggiornamento automatico**: il flow chart si aggiorna quando salvi il file
+
+Questa visualizzazione è particolarmente utile per:
+- Capire programmi complessi
+- Insegnare concetti di programmazione assembly
+- Visualizzare l'organizzazione del codice
+
+Il Flow Chart si aggiorna in tempo reale quando salvi modifiche al codice, mantenendo una visione sempre aggiornata della struttura del tuo programma.
+
+#### Esempio di Flow Chart
+
+![SIMASM Flow Chart](images/flowchart-example.png "Esempio di visualizzazione del Flow Chart")
 
 ---
 
