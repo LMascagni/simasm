@@ -292,7 +292,7 @@ function activate(context) {
          }
 
          const labelWidth = Math.max(...lines.map(l => l.label.length));
-         const instWidth = Math.max(...lines.map (l => l.inst.length));
+         const instWidth = Math.max(...lines.map(l => l.inst.length));
          const op1Width = Math.max(...lines.map(l => l.op1.length));
          const op2Width = Math.max(...lines.map(l => l.op2.length));
 
@@ -598,7 +598,7 @@ function activate(context) {
             body {
                font-family: Arial, sans-serif;
                padding: 20px;
-               background-color: #f5f5f5;
+               background-color: #1f1f1f;
                position: relative;
             }
             .flowchart-container {
@@ -613,7 +613,7 @@ function activate(context) {
                border: 2px solid #336699;
                border-radius: 8px;
                min-height: 60px;
-               background-color: #f0f8ff;
+               background-color:rgb(41, 41, 41);
                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
                display: flex;
                flex-direction: column;
@@ -999,16 +999,39 @@ function drawArrows() {
                     
                     // Crea il percorso della freccia
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                                 
+                    // Disegna la freccia con percorso migliorato usando curve Bezier
+                    const curveRadius = 5; // Raggio di curvatura per i raccordi - aumentato per maggiore visibilità
                     
-                    // Disegna la freccia con percorso migliorato
-                    const d = \`M \${startX},\${startY} 
-                               H \${verticalLineX} 
-                               V \${endY - verticalOffset} 
-                               H \${endX}\`;
+                    // Determina se la freccia va verso l'alto o verso il basso
+                    const goingUp = startY > endY;
+                    
+                    // Calcola i punti di controllo per le curve in base alla direzione
+                    let d;
+                    if (goingUp) {
+                        // Freccia che va verso l'alto
+                        d = \`M \${startX},\${startY} 
+                             H \${verticalLineX + curveRadius} 
+                             Q \${verticalLineX},\${startY} \${verticalLineX},\${startY - curveRadius}
+                             V \${endY + verticalOffset + curveRadius} 
+                             Q \${verticalLineX},\${endY + verticalOffset} \${verticalLineX + curveRadius},\${endY + verticalOffset}
+                             H \${endX}\`;
+                    } else {
+                        // Freccia che va verso il basso
+                        d = \`M \${startX},\${startY} 
+                             H \${verticalLineX + curveRadius} 
+                             Q \${verticalLineX},\${startY} \${verticalLineX},\${startY + curveRadius}
+                             V \${endY - verticalOffset - curveRadius} 
+                             Q \${verticalLineX},\${endY - verticalOffset} \${verticalLineX + curveRadius},\${endY - verticalOffset}
+                             H \${endX}\`;
+                    }
                     
                     path.setAttribute('d', d);
                     path.setAttribute('class', 'arrow-line ' + (sameBox ? 'arrow-same-box' : 'arrow-diff-box'));
                     path.setAttribute('marker-end', 'url(#' + (sameBox ? 'arrowhead-same' : 'arrowhead-diff') + ')');
+                    path.setAttribute('stroke-linejoin', 'round');
+                    path.setAttribute('stroke-linecap', 'round');
+                    path.setAttribute('stroke-width', '2.5'); // Aumentato lo spessore della linea
                     
                     svg.appendChild(path);
                 });
