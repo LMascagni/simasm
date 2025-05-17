@@ -1,0 +1,18 @@
+;; --- DATA ---
+N1:     word  0010
+N2:     word  0010
+
+;; --- SETUP ---
+START:  LDWA  R1    N1  ; R1 = mem[0x0000]
+        LDWA  R2    N2  ; R2 = mem[0x0002]
+        LDWI  R0    0   ; R0 = 0 (accumulatore del risultato)
+        MV    R2    R3  ; R3 = contatore = R2
+
+;; --- MAIN LOOP ---
+LOOP:   JMPZ  FINE      ; Se R3 == 0, salta a FINE
+        ADD   R1    R0  ; R0 = R0 + R1
+        DEC   R3        ; R3 = R3 - 1
+        JMP   LOOP      ; Ripeti ciclo
+
+;; --- END ---
+FINE:   HLT             ; Fine programma
